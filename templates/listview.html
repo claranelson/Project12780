@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
+    <script src="/static/listview.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/listview.css">
+    <link rel="stylesheet" type="text/css" href="/static/universal.css">
+    <title>List View</title>
+</head>
+<body onload = loadtasks()>
+    <div class = "tabs">
+        <button class = "menu"><a href="http://127.0.0.1:8000/kanbanview">Kanban View</a></button>
+        <button class = "menu" id="showtasks" onclick="showtaskentry()">Add Task</button>
+        <button class = "menu last"><a href="http://127.0.0.1:8000/categorymaker">Add Category</a></button>
+    </div>
+
+    <h1>List View</h1>
+
+    <p>Welcome to the list view. Here you can see all your tasks in a tabular format.</p>
+    <p>To edit a task, click its row in the table. To sort by a task attribute, click the header. To add a task, click the button in the menu bar.</p>
+    <p>To filter tasks, use the filter bar to select the task name, status, or category you want to filter by. You can also filter for the tasks that are currently applicable, for which the current date is after their start date and before their due date.</p>
+
+    <h3>Filter:</h3>
+
+    <div class = "filterbar">
+        <label class = "filt">Task Name: </label><input class = "filt" id="namefilter" value = "None" style="width:150px">
+        <label class = "filt">Status: </label><select class = "filt" id = "statfilter" style="width:150px"><option value = "N/A">N/A</option><option value = "Not started">Not Started</option>
+        <option value = "In Progress">In Progress</option><option value = "Complete">Complete</option></select>
+        <label class = "filt">Current?</label><select class = "filt" id = "currentfilt" style="width:100px"><option value = None>None</option><option value = "Yes">Yes</option></select>
+        <label class = "filt">Category: </label><select class = "filt" id = "catfilt" style="width:100px"></select>
+        <button class = "filt" onclick = "filter()">Filter</button>
+        <button class = "filt last" onclick = "reset()" style = "width:150px">Reset Filter</button>
+    </div>
+
+    <div id = "addtask">
+        <h3>Add/Edit Task</h3>
+
+        <table>
+
+            <tr><td>Task ID:</td>
+                <td><input id="taskid" style="width:150px"></td></tr>
+            <tr><td>Task Name:</td>
+                <td><input id = "taskname" style="width:150px"></td></tr>
+            <tr><td>Description:</td>
+                <td><input id = "taskdesc" style="width:150px"></td></tr>
+            <tr><td>Start Date:</td>
+                <td><input id = "startdate" style="width:150px"></td></tr>
+            <tr><td>Due Date:</td>
+                <td><input id = "duedate" style="width:150px"></td></tr>
+            <tr><td>Categories:</td>
+                <td><select id = "cats" style="width:150px"></select></td></tr>
+            <tr><td>Progress:</td>
+                <td><input id = "prog" style="width:150px"></td></tr>
+            <tr><td>Status:</td>
+                <td><select id = "stat" style="width:150px">
+                        <option value = "Not started">Not Started</option>
+                        <option value = "In Progress">In Progress</option>
+                        <option value = "Complete">Complete</option>
+                    </select></td></tr>
+
+        </table>
+
+        <button id = "add" onclick = "addTask()">Add Task</button>
+        <button id = "edit" onclick = "editTask()">Edit Task</button>
+        <button onclick = "canceladdtask()" style = "width:180px">Cancel Add/Edit Task</button>
+    </div>
+
+    <div id = "listview">
+        <table id = "listviewtable">
+
+            <tr id = "header">
+{#                The onclick events link to the table sorting function and pass it the correct column to work with#}
+                <td onclick="sortTable(0)">Task ID</td>
+                <td onclick="sortTable(1)">Task Name</td>
+                <td onclick="sortTable(2)">Task Description</td>
+                <td>Start Date</td>
+                <td>Due Date</td>
+                <td onclick="sortTable(5)">Categories</td>
+                <td onclick="sortTable(6)">Status</td>
+                <td>Progress</td>
+            </tr>
+
+        </table>
+    </div>
+</body>
+</html>

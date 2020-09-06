@@ -1,0 +1,11 @@
+/*This file contains CSS that is used for multiple pages, primarily for the filter bar and menu bar. It is linked to in all HTML files.*/
+
+.menu {height:40px; width:120px;float:left;background-color:mediumpurple;text-decoration:none;color:whitesmoke;font-size:1em;
+        margin-top:5px;margin-bottom:5px}
+.filt {height: 20px;float:left;color:black;font-size:1em;
+        margin-top:5px;margin-bottom:5px; margin-right: 5px;font-family:Arial, sans-serif}
+.filterbar {background-color:aliceblue}
+.menu a {text-decoration:none;color:whitesmoke}
+.tabs {background-color:plum}
+.last {float:none; clear:right}
+body {background-color:aliceblue}

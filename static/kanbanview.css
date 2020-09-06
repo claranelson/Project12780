@@ -1,0 +1,14 @@
+/*This file has the CSS fo the Kanban page. Some parts were taken directly from
+the source referenced in the code and report that had a walkthrough of making
+a Kanban board with jQuery.*/
+
+body {font-family:Arial;}
+h2 {margin:5px;text-align:center}
+ul {padding-left:0;list-style:none}
+input[type=text] {margin:10px}
+input[type=button] {margin:10px}
+.container {width: 300px; float:left;clear: right;margin:10px; border-radius: 5px;}
+.sortable { list-style-type: none;min-height:30px; border-radius: 5px;}
+.sortable li { padding: 0.1em; padding-left: 1em; font-size: 1em; line-height: 1em} /* height: 50px;margin: 3px 3px 3px 3px; }*/
+.sortable li span { position: absolute;}
+.card{border-radius:15px; width:260px;height:100px;border-style:solid;border-color:black;}

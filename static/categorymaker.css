@@ -1,0 +1,9 @@
+#categorytable td {width:400px;
+    border:1px solid black;
+    font-family: Arial, sans-serif;
+    text-align:center;}
+#header {font-weight:bold;}
+#categorytable {border-collapse:collapse;margin:50px;}
+h1,td,p,h3,label {
+    font-family: Arial, sans-serif;
+}

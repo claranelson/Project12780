@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Category Maker</title>
+     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
+    <script src="/static/categorymaker.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/categorymaker.css">
+    <link rel="stylesheet" type="text/css" href="/static/universal.css">
+</head>
+<body onload="loadcats()">
+
+    <div class = "tabs">
+        <button class = "menu"><a href="http://127.0.0.1:8000/listview">List View</a></button>
+        <button class = "menu last"> <a href="http://127.0.0.1:8000/kanbanview">Kanban View</a></button>
+    </div>
+	<h1>Category Maker</h1>
+
+    <p>Welcome to the category viewer and maker. Here you can see all the categories and their CSS color.</p>
+    <p>To add a category, type its name into the input box and select a color. Then click the button to add it to the list.</p>
+
+    <table id = "categorytable">
+
+        <tr id = "header">
+
+            <td>ID</td>
+            <td>Category Name</td>
+            <td>Color</td>
+
+        </tr>
+
+    </table>
+
+    <div id = "addcat">
+
+        <table>
+            <tr><td>Category Name:</td><td><input id = "catname" style="width:150px"></td></tr>
+            <tr><td>Color:</td><td><select id = "color" style="width:150px"><option value = "plum">Purple</option>
+            <option value = "cornflowerblue">Blue</option><option value = "pink">Pink</option>
+            <option value = "indianred">Red</option><option value="palegoldenrod">Yellow</option>
+            <option value = "paleturquoise">Turquoise</option>
+            <option value = "lightgreen">Green</option><option value="saddlebrown">Brown</option>
+            <option value = "lightgrey">Grey</option></select></td></tr>
+        </table>
+        <button onclick = "addCategory()">Add Category</button>
+
+    </div>
+
+</body>
+</html>
