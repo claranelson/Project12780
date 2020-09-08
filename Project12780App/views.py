@@ -3,27 +3,40 @@ from __future__ import unicode_literals
 from .models import Task
 from .models import Category
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.core import serializers
 import datetime
+import json
 
 # Create your views here.
 def loadTasks(request):
     tasks = Task.objects.all()
-    result = ""
-    for task in tasks:
-        result = result + str(task.id) + ","
-        result = result + task.TaskName + ","
-        result = result + task.Description + ","
-        result = result + str(task.StartDate) + ","
-        result = result + str(task.DueDate) + ","
-        result = result + task.Categories + ","
-        result = result + str(task.Status) + ","
-        result = result + str(task.Progress) + ";"
+#     values = tasks.values('id','TaskName')# 
+#     print(values)
+#     jsonresponse = JsonResponse({'Tasks': list(tasks)})
+#     print(jsonresponse)
+#     jsonthing = json.dumps(tasks)
+#     print(jsonthing)
+    json = serializers.serialize('json',tasks)
+#     print(json)
 
-    result = result[:-1] #to remove last semicolon
+#     result = ""# 
+#     for task in tasks:
+#         result = result + str(task.id) + ","
+#         result = result + task.TaskName + ","
+#         result = result + task.Description + ","
+#         result = result + str(task.StartDate) + ","
+#         result = result + str(task.DueDate) + ","
+#         result = result + task.Categories + ","
+#         result = result + str(task.Status) + ","
+#         result = result + str(task.Progress) + ";"
+# 
+#     result = result[:-1] #to remove last semicolon
 
 
-    return HttpResponse(result)
+#     return HttpResponse(result)
+    return HttpResponse(json)
 
 def addTask(request):
     taskname = request.GET["TaskName"]

@@ -67,41 +67,88 @@ function loadtasks() {
     $("#addtask").hide();
     var xhttp = new XMLHttpRequest();
     tasks = []; //create global variable
+    console.log("______-----______-----_____-----");
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200) {
             //parse the response string into the different task strings
             var JSONstring = xhttp.responseText;
-            var tasksstrings = JSONstring.split(";");
-            var listviewtable = $("#listviewtable"); //select the table that will show the tasks
-
-            for(var i = 0; i<tasksstrings.length;i++) {
-                //split task into its attributes
-                var taskstring = tasksstrings[i];
-                var attributeStrings = taskstring.split(",");
-
-                //create Task object and add to tasks global variable
-                var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-                tasks.push(newTask);
-
-                //create big long string of all of the columns in this task's row in the table
-                strTask = "<tr onclick = edittaskopen(" + attributeStrings[0]+ ")><td>"+ attributeStrings[0] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[1] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[2] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[3] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[4] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[5] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[6] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[7] +"</td>";
-                strTask = strTask + "</tr>";
-
-                listviewtable.append(strTask); //add row to table
-            }
+            console.log("________________________________________");
+            var json_obj = JSON.parse(JSONstring)
+            constructTable(json_obj, "#listviewtable");
+            
+            // 
+//             var tasksstrings = JSONstring.split(";");
+//             var listviewtable = $("#listviewtable"); //select the table that will show the tasks
+// 
+//             for(var i = 0; i<tasksstrings.length;i++) {
+//                 //split task into its attributes
+//                 var taskstring = tasksstrings[i];
+//                 var attributeStrings = taskstring.split(",");
+// 
+//                 //create Task object and add to tasks global variable
+//                 var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
+//                 tasks.push(newTask);
+// 
+//                 //create big long string of all of the columns in this task's row in the table
+//                 strTask = "<tr onclick = edittaskopen(" + attributeStrings[0]+ ")><td>"+ attributeStrings[0] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[1] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[2] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[3] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[4] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[5] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[6] +"</td>";
+//                 strTask = strTask + "<td>"+ attributeStrings[7] +"</td>";
+//                 strTask = strTask + "</tr>";
+// 
+//                 listviewtable.append(strTask); //add row to table
+//             }
 
         }
 
     };
     xhttp.open("GET", "/loadTasks/", true);
     xhttp.send();
+}
+
+function constructTable(list, selector) { 
+	// reference from https://www.geeksforgeeks.org/how-to-convert-json-data-to-a-html-table-using-javascript-jquery/
+	// Getting the all column names 
+	tasks = []
+	//construct header
+	var colnames = ["ID","Task Name","Description","Start Date","Due Date","Categories","Progress","Status"];
+	
+	var header = $('<tr/>');
+	for (var j = 0; j < colnames.length; j++) {
+		header.append($('<th/>').html(colnames[j]))
+	}
+	$(selector).html(header);
+	
+	//keys for data
+	var cols = ["TaskName","Description","StartDate","DueDate","Categories","Progress","Status"];
+	
+	// Traversing the JSON data 
+	for (var i = 0; i < list.length; i++) { 
+		var row = $('<tr/>');    
+		row.append($('<td/>').html(list[i]["pk"]));
+		for (var colIndex = 0; colIndex < cols.length; colIndex++) 
+		{ 
+		
+			var val = list[i]["fields"][cols[colIndex]]; 
+			  
+			// If there is any key, which is matching 
+			// with the column name 
+			if (val == null) val = "";   
+			row.append($('<td/>').html(val)); 
+
+		} 
+		
+		//add on click event
+// 		row.click(edittaskopen(list[i]["pk"]))
+		row.attr('onClick', 'edittaskopen('+ String(list[i]["pk"])+')')
+		// Adding each row to the table 
+		$(selector).append(row); 
+	} 
+	return tasks;
 }
 
 function addTask() {
@@ -120,16 +167,16 @@ function addTask() {
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
             //reset the list view table to be just the headers
-            $("#listviewtable").html("<tr id = \'header\'>\n" +
-            "    <td>Task ID</td>\n" +
-            "    <td>Task Name</td>\n" +
-            "    <td>Task Description</td>\n" +
-            "    <td>Start Date</td>\n" +
-            "    <td>Due Date</td>\n" +
-            "    <td>Categories</td>\n" +
-            "    <td>Status</td>\n" +
-            " <td>Progress</td>\n" +
-            "</tr>");
+//             $("#listviewtable").html("<tr id = \'header\'>\n" +
+//             "    <td>Task ID</td>\n" +
+//             "    <td>Task Name</td>\n" +
+//             "    <td>Task Description</td>\n" +
+//             "    <td>Start Date</td>\n" +
+//             "    <td>Due Date</td>\n" +
+//             "    <td>Categories</td>\n" +
+//             "    <td>Status</td>\n" +
+//             " <td>Progress</td>\n" +
+//             "</tr>");
 
             //now load the tasks back in
             loadtasks();

@@ -29,6 +29,7 @@
     <p>To edit a task, click its row in the table. To sort by a task attribute, click the header. To add a task, click the button in the menu bar.</p>
     <p>To filter tasks, use the filter bar to select the task name, status, or category you want to filter by. You can also filter for the tasks that are currently applicable, for which the current date is after their start date and before their due date.</p>
 
+
     <h3>Filter:</h3>
 
     <div class = "filterbar">
@@ -43,11 +44,11 @@
 
     <div id = "addtask">
         <h3>Add/Edit Task</h3>
-
+		<p>Please note that Task Name, Start Date, Due Date, Category, Status, and Progress are all required entries. If these are not filled in, the task will not add correctly to the database.</p>
         <table>
 
-            <tr><td>Task ID:</td>
-                <td><input id="taskid" style="width:150px"></td></tr>
+            <tr class="hidden"><td class="hidden">Task ID:</td>
+                <td style="visibility:collapse"><input id="taskid" style="width:150px"></td></tr>
             <tr><td>Task Name:</td>
                 <td><input id = "taskname" style="width:150px"></td></tr>
             <tr><td>Description:</td>
@@ -77,9 +78,10 @@
     <div id = "listview">
         <table id = "listviewtable">
 
+<!-- 
             <tr id = "header">
 {#                The onclick events link to the table sorting function and pass it the correct column to work with#}
-                <td onclick="sortTable(0)">Task ID</td>
+                <td class="collapsed">Task ID</td>
                 <td onclick="sortTable(1)">Task Name</td>
                 <td onclick="sortTable(2)">Task Description</td>
                 <td>Start Date</td>
@@ -88,6 +90,7 @@
                 <td onclick="sortTable(6)">Status</td>
                 <td>Progress</td>
             </tr>
+ -->
 
         </table>
     </div>
