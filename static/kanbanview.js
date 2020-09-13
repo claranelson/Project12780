@@ -215,7 +215,7 @@ function createCard(list_task) {
             console.log(task.Categories);
             console.log(task.Categories.length);
         }
-        if (catslist[j].catname == task.Categories) { //if it matches
+        if (catslist[j].catname.trim() == task.Categories) { //if it matches
             //set catcol to the color for that category
             category_color = catslist[j].catcolor;
 
