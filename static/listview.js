@@ -43,13 +43,13 @@ function loadcats() {
 function Task(id,name, des,start,due,cat,stat,prog)
 { //Task object
     this.id = id;
-    this.taskname = name;
-    this.description = des;
-    this.startdate = start;
-    this.duedate = due;
-    this.category = cat;
-    this.stat = stat;
-    this.progressy =prog;
+    this.TaskName = name;
+    this.Description = des;
+    this.StartDate = start;
+    this.DueDate = due;
+    this.Categories = cat;
+    this.Status = stat;
+    this.Progress =prog;
 }
 
 function showtaskentry() { //open the add task section
@@ -63,46 +63,17 @@ function canceladdtask() { //cancel the add or edit task window.
 }
 
 function loadtasks() {
-    //modeled after drawings example used in class
+    //load tasks into table for initial page load
     $("#addtask").hide();
     var xhttp = new XMLHttpRequest();
     tasks = []; //create global variable
     console.log("______-----______-----_____-----");
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200) {
-            //parse the response string into the different task strings
+            //parse the response string JSON and sent to constructTable to make the table
             var JSONstring = xhttp.responseText;
-            console.log("________________________________________");
-            var json_obj = JSON.parse(JSONstring)
+            var json_obj = JSON.parse(JSONstring);
             constructTable(json_obj, "#listviewtable");
-            
-            // 
-//             var tasksstrings = JSONstring.split(";");
-//             var listviewtable = $("#listviewtable"); //select the table that will show the tasks
-// 
-//             for(var i = 0; i<tasksstrings.length;i++) {
-//                 //split task into its attributes
-//                 var taskstring = tasksstrings[i];
-//                 var attributeStrings = taskstring.split(",");
-// 
-//                 //create Task object and add to tasks global variable
-//                 var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-//                 tasks.push(newTask);
-// 
-//                 //create big long string of all of the columns in this task's row in the table
-//                 strTask = "<tr onclick = edittaskopen(" + attributeStrings[0]+ ")><td>"+ attributeStrings[0] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[1] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[2] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[3] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[4] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[5] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[6] +"</td>";
-//                 strTask = strTask + "<td>"+ attributeStrings[7] +"</td>";
-//                 strTask = strTask + "</tr>";
-// 
-//                 listviewtable.append(strTask); //add row to table
-//             }
-
         }
 
     };
@@ -128,25 +99,35 @@ function constructTable(list, selector) {
 	
 	// Traversing the JSON data 
 	for (var i = 0; i < list.length; i++) { 
-		var row = $('<tr/>');    
-		row.append($('<td/>').html(list[i]["pk"]));
-		for (var colIndex = 0; colIndex < cols.length; colIndex++) 
-		{ 
+		var row = $('<tr/>'); 
+        var db_id = list[i]["pk"];
+		row.append($('<td/>').html(db_id));
+
+
+        var task = new Task(); //Create task object for compatibility with previous code (filling in edit task, etc)
+        task.id = db_id;
+
 		
-			var val = list[i]["fields"][cols[colIndex]]; 
-			  
+        for (var colIndex = 0; colIndex < cols.length; colIndex++) 
+		{ 
+		    var colname = cols[colIndex];
+			var val = list[i]["fields"][colname]; 
+			
 			// If there is any key, which is matching 
 			// with the column name 
 			if (val == null) val = "";   
 			row.append($('<td/>').html(val)); 
 
+            task[colname] = val;
+
 		} 
 		
 		//add on click event
 // 		row.click(edittaskopen(list[i]["pk"]))
-		row.attr('onClick', 'edittaskopen('+ String(list[i]["pk"])+')')
+		row.attr('onClick', 'edittaskopen('+ String(db_id)+')');
 		// Adding each row to the table 
 		$(selector).append(row); 
+        tasks.push(task)
 	} 
 	return tasks;
 }
@@ -166,20 +147,8 @@ function addTask() {
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
-            //reset the list view table to be just the headers
-//             $("#listviewtable").html("<tr id = \'header\'>\n" +
-//             "    <td>Task ID</td>\n" +
-//             "    <td>Task Name</td>\n" +
-//             "    <td>Task Description</td>\n" +
-//             "    <td>Start Date</td>\n" +
-//             "    <td>Due Date</td>\n" +
-//             "    <td>Categories</td>\n" +
-//             "    <td>Status</td>\n" +
-//             " <td>Progress</td>\n" +
-//             "</tr>");
-
-            //now load the tasks back in
-            loadtasks();
+            //reset the list view table
+            reset()
 
         }};
     //send attributes to be added to the database
@@ -199,9 +168,11 @@ function addTask() {
 }
 
 function edittaskopen(idarg) {//open add/edit task div and fill in the attributes of the task being edited
+    console.log("meat1");
     $("#addtask").show(); //show the div
     $("#add").hide(); //ensure add task button is hidden
     $("#edit").show(); //ensure edit task button is showing
+    console.log("I made it to the meat");
 
     //find index in tasks list that corresponds to the ID of the current task
     var index = 0;
@@ -212,15 +183,16 @@ function edittaskopen(idarg) {//open add/edit task div and fill in the attribute
     }
 
     var currenttask = tasks[index]; //get the objects of the task that was clicked on
+    console.log(currenttask);
 
     //fill the values of the input and select boxes
-    $("#taskdesc").val(currenttask.description);
-    $("#taskname").val(currenttask.taskname);
-    $("#duedate").val(currenttask.duedate);
-    $("#startdate").val(currenttask.startdate);
-    $("#cats").val(currenttask.category);
-    $("#prog").val(currenttask.progressy);
-    $("#stat").val(currenttask.stat);
+    $("#taskdesc").val(currenttask.Description);
+    $("#taskname").val(currenttask.TaskName);
+    $("#duedate").val(currenttask.DueDate);
+    $("#startdate").val(currenttask.StartDate);
+    $("#cats").val(currenttask.Categories);
+    $("#prog").val(currenttask.Progress);
+    $("#stat").val(currenttask.Status);
     $("#taskid").val(currenttask.id);
 }
 
@@ -238,46 +210,10 @@ function filter() {
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {
-            //parse HTTP response string
             var JSONstring = xhttp.responseText;
-            var tasksstrings = JSONstring.split(";");
-
-            //get listview table and clear it so only the header are still there
-            var listviewtable = $("#listviewtable");
-            $("#listviewtable").html("<tr id = \'header\'>\n" + //clear listviewtable html
-                    "    <td>Task ID</td>\n" +
-                    "    <td>Task Name</td>\n" +
-                    "    <td>Task Description</td>\n" +
-                    "    <td>Start Date</td>\n" +
-                    "    <td>Due Date</td>\n" +
-                    "    <td>Categories</td>\n" +
-                    "    <td>Status</td>\n" +
-                    " <td>Progress</td>\n" +
-                    "</tr>");
-
-            for(var i = 0; i<tasksstrings.length;i++)
-            {
-                //parse each task into its attributes
-                var taskstring = tasksstrings[i];
-                var attributeStrings = taskstring.split(",");
-
-                //create new task attribute
-                var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-                tasks.push(newTask);
-
-                //create table rows
-                strTask = "<tr onclick = edittaskopen(" + attributeStrings[0]+ ")><td>"+ attributeStrings[0] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[1] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[2] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[3] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[4] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[5] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[6] +"</td>";
-                strTask = strTask + "<td>"+ attributeStrings[7] +"</td>";
-                strTask = strTask + "</tr>";
-
-                listviewtable.append(strTask);
-            }
+            var json_obj = JSON.parse(JSONstring);
+            $('#listviewtable').empty();
+            constructTable(json_obj, "#listviewtable");
 
         }
 
@@ -309,19 +245,8 @@ function editTask() {
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
 
-            //reset listview table to just have headers
-            $("#listviewtable").html("<tr id = \'header\'>\n" +
-            "    <td>Task ID</td>\n" +
-            "    <td>Task Name</td>\n" +
-            "    <td>Task Description</td>\n" +
-            "    <td>Start Date</td>\n" +
-            "    <td>Due Date</td>\n" +
-            "    <td>Categories</td>\n" +
-            "    <td>Status</td>\n" +
-            " <td>Progress</td>\n" +
-            "</tr>");
-            //actually load the tasks
-            loadtasks();
+            //reset listview table
+            reset()
 
         }};
     xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
@@ -342,16 +267,7 @@ function editTask() {
 
 function reset() {
     //reset the list view table to just be the headers
-    $("#listviewtable").html("<tr id = \'header\'>\n" + //clear listviewtable html
-        "    <td>Task ID</td>\n" +
-        "    <td>Task Name</td>\n" +
-        "    <td>Task Description</td>\n" +
-        "    <td>Start Date</td>\n" +
-        "    <td>Due Date</td>\n" +
-        "    <td>Categories</td>\n" +
-        "    <td>Status</td>\n" +
-        " <td>Progress</td>\n" +
-        "</tr>");
+    $('#listviewtable').empty();
     //actually load the tasks
     loadtasks();
 }

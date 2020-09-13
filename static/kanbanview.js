@@ -19,13 +19,13 @@ function loader() {
 function Task(id,name, des,start,due,cat,stat,prog)
 { //task object
     this.id = id;
-    this.taskname = name;
-    this.description = des;
-    this.startdate = start;
-    this.duedate = due;
-    this.category = cat;
-    this.stat = stat;
-    this.progressy = prog;
+    this.TaskName = name;
+    this.Description = des;
+    this.StartDate = start;
+    this.DueDate = due;
+    this.Categories = cat;
+    this.Status = stat;
+    this.Progress = prog;
 }
 
 function Category(id,name,color) {
@@ -87,43 +87,48 @@ function loadtasks() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {   //parse string to get tasks
             var JSONstring = xhttp.responseText;
-            var tasksstrings = JSONstring.split(";");
+            var json_obj = JSON.parse(JSONstring);
+            createcards(json_obj);
 
-            for(var i = 0; i<tasksstrings.length;i++)
-            {
-                catcol = "white"; //set in case there's no cat color
 
-                //split each task into its task attributes
-                var taskstring = tasksstrings[i];
-                var attributeStrings = taskstring.split(",");
 
-                //create task attribute
-                var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-                tasks.push(newTask); //add to task list
+            // for(var i = 0; i<tasksstrings.length;i++)
+            // {
+            //     catcol = "white"; //set in case there's no cat color
 
-                for (var j = 0; j<catslist.length;j++) { //cycle through categories and see if the category of the task matches the category of each category object
+            //     //split each task into its task attributes
+            //     var taskstring = tasksstrings[i];
+            //     var attributeStrings = taskstring.split(",");
 
-                    if (catslist[j].catname == attributeStrings[5]) { //if it matches
-                        //set catcol to the color for that category
-                        var catcol = catslist[j].catcolor;
-                    }
-                }
-                //create string of list, which is the card, to be added to the proper column
-                //also set the color, the on double click event, and the class to card
-                //add the proper task attributes to the card
-                strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "+attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
+            //     //create task attribute
+            //     var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
+            //     tasks.push(newTask); //add to task list
 
-                //find the the id of the column corresponding to the task's status
-                if (attributeStrings[6] == "Not started") {
-                    var tagname = "#Not_Startedul";
-                } else if (attributeStrings[6] == "In Progress"){
-                     var tagname = "#In_Progressul";
-                }else {
-                    var tagname = "#Completeul";
-                }
-                $(tagname).append(strTask); //add task to column
+            //     for (var j = 0; j<catslist.length;j++) { //cycle through categories and see if the category of the task matches the category of each category object
 
-            }
+            //         if (catslist[j].catname == attributeStrings[5]) { //if it matches
+            //             //set catcol to the color for that category
+            //             var catcol = catslist[j].catcolor;
+            //         }
+            //     }
+            //     //create string of list, which is the card, to be added to the proper column
+            //     //also set the color, the on double click event, and the class to card
+            //     //add the proper task attributes to the card
+            //     strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + 
+            //     "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "
+            //     +attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
+
+            //     //find the the id of the column corresponding to the task's status
+            //     if (attributeStrings[6] == "Not started") {
+            //         var tagname = "#Not_Startedul";
+            //     } else if (attributeStrings[6] == "In Progress"){
+            //          var tagname = "#In_Progressul";
+            //     }else {
+            //         var tagname = "#Completeul";
+            //     }
+            //     $(tagname).append(strTask); //add task to column
+
+            // }
 
         }
 
@@ -131,6 +136,101 @@ function loadtasks() {
 
     xhttp.open("GET", "/loadTasks/",true);
     xhttp.send();
+}
+
+function createcards(list) {
+    
+
+    for (var i = 0; i < list.length; i++) {
+        task = createCard(list[i]);
+        tasks.push(task);
+
+
+    }
+
+}
+
+function createCard(list_task) {
+
+    //column and field are used more or less interchangeably here as it is modified from the listview
+
+    var task = new Task();
+
+    var card = $('<li/>');
+
+    var card_info = $('<ul/>');
+
+    card_fields = ["TaskName", "Categories","DueDate", "Status"];
+    card_labels = ["Name", "Category", "Due Date"];
+
+    fields = list_task["fields"];
+
+    //add ID separately
+    var db_id = list_task["pk"];
+    var id_field = $('<li/>');
+    id_field.html(db_id);
+    id_field.css("visibility","hidden");
+    id_field.attr("id","taskid");
+    card_info.append(id_field);
+
+    task.id = db_id;
+
+    //cycle through fields we want on the card and fill the fields if there's one in our JSON
+    for (var colIndex = 0; colIndex < card_fields.length; colIndex++) 
+    {
+        var colname=card_fields[colIndex];
+        var val = list_task["fields"][colname];
+
+        if (val == null) val = "N/A";
+
+        if (colname != "Status") {
+            field_li = $('<li/>');
+            field_li.html(card_labels[colIndex]+ ": " + String(val));
+            card_info.append(field_li);
+        }
+        
+
+        //add to object for housekeeping
+        task[colname] = val;
+
+    }
+
+
+    //assign category colors
+    //assign backup color
+    var category_color = "white";
+    console.log(catslist);
+    //find the category color
+    for (var j = 0; j<catslist.length;j++) { //cycle through categories and see if the category of the task matches the category of each category object
+        console.log(j);
+        console.log(task.Categories);
+        console.log(catslist[j].catname);
+        if (catslist[j].catname == task.Categories) { //if it matches
+            //set catcol to the color for that category
+            category_color = catslist[j].catcolor;
+            console.log(category_color);
+        }
+    }
+
+    //add attributes
+    card.addClass("card");
+    card.css("background-color",category_color);
+    card_info.addClass("card_info");
+    card.append(card_info);
+    // card.dblclick(edittaskopen(id));
+
+    if (task.Status == "Not started") {
+        var tagname = "#Not_Startedul";
+    } else if (task.Status == "In Progress"){
+         var tagname = "#In_Progressul";
+    }else {
+        var tagname = "#Completeul";
+    }
+    $(tagname).append(card); //add task to column
+
+    return task;
+
+
 }
 
 
@@ -228,7 +328,9 @@ function taskmoved(event,ui) {
     //change the status of the task when it's moved
     var xhttp2 = new XMLHttpRequest();
     var taskcard = ui.item; //get the card that was moved
+    console.log(taskcard.html());
     var taskid = taskcard.find("#taskid").html(); //get the inner html of the part with ID "#taskid", which will be the ID of the task
+    console.log(taskid);
 
     var newstatid = $(this).attr('id'); //get the HTML ID of the column the task was moved to
 
@@ -242,7 +344,7 @@ function taskmoved(event,ui) {
     }
 
     //send HTTP request with the task's ID and new status
-    xhttp2.open("GET", "/editTaskstatus?ID="+taskid+"&Status="+ newstatus, true);
+    xhttp2.open("GET", "/editTaskstatus?ID="+String(taskid)+"&Status="+ newstatus, true);
     xhttp2.send();
 }
 

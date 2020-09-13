@@ -2,8 +2,11 @@
     border:1px solid black;
     font-family: Arial, sans-serif;
     text-align:center;}
-#header {font-weight:bold;}
 #listviewtable {border-collapse:collapse;margin:50px;}
+#listviewtable th {
+	font-family: Arial, sans-serif;
+	font-weight:bold;
+}
 h1,td,p,h3,label {
     font-family: Arial, sans-serif;
 }
