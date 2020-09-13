@@ -73,7 +73,7 @@ function loadtasks() {
             //parse the response string JSON and sent to constructTable to make the table
             var JSONstring = xhttp.responseText;
             var json_obj = JSON.parse(JSONstring);
-            constructTable(json_obj, "#listviewtable");
+            tasks = constructTable(json_obj, "#listviewtable");
         }
 
     };

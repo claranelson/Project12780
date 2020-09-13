@@ -259,42 +259,47 @@ function filter() {
     tasks = [];
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200) {
-            var JSONstring = xhttp.responseText;
-            var tasksstrings = JSONstring.split(";");
             //need to clear the kanban board
             $("#In_Progressul").html("");
             $("#Not_Startedul").html("");
             $("#Completeul").html("");
 
+            //get response text
+            var JSONstring = xhttp.responseText;
+            var json_obj = JSON.parse(JSONstring);
+            createcards(json_obj);
+            
+            
 
-            for(var i = 0; i<tasksstrings.length;i++)
-            {
 
-                catcol = "white"; //set to white in case there is no color
-                var taskstring = tasksstrings[i];
-                var attributeStrings = taskstring.split(",");
+            // for(var i = 0; i<tasksstrings.length;i++)
+            // {
 
-                var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-                tasks.push(newTask);
-                var status = attributeStrings[7];
+            //     catcol = "white"; //set to white in case there is no color
+            //     var taskstring = tasksstrings[i];
+            //     var attributeStrings = taskstring.split(",");
 
-                for (var j = 0; j<catslist.length;j++) {
-                    if (catslist[j].catname == attributeStrings[5]) {
-                        var catcol = catslist[j].catcolor;
-                    }
-                }
-                strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "+attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
+            //     var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
+            //     tasks.push(newTask);
+            //     var status = attributeStrings[7];
 
-                if (attributeStrings[6] == "Not started") {
-                    var tagname = "#Not_Startedul";
-                } else if (attributeStrings[6] == "In Progress"){
-                     var tagname = "#In_Progressul";
-                }else {
-                    var tagname = "#Completeul";
-                }
-                $(tagname).append(strTask); //add task to column
+            //     for (var j = 0; j<catslist.length;j++) {
+            //         if (catslist[j].catname == attributeStrings[5]) {
+            //             var catcol = catslist[j].catcolor;
+            //         }
+            //     }
+            //     strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "+attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
 
-            }
+            //     if (attributeStrings[6] == "Not started") {
+            //         var tagname = "#Not_Startedul";
+            //     } else if (attributeStrings[6] == "In Progress"){
+            //          var tagname = "#In_Progressul";
+            //     }else {
+            //         var tagname = "#Completeul";
+            //     }
+            //     $(tagname).append(strTask); //add task to column
+
+            // }
 
         }
 
@@ -313,6 +318,7 @@ function edittaskopen(idarg) {
     //open the edit task menu and fill all the input boxes with the correct values for the task
     $("#addtask").show(); //open the menu
     $("#add").hide(); //hide the add task button
+    $("#edit").show();
     var index = 0;
     //find the index of the task in the tasks global variable that was created when tasks were loaded
     for(var i = 0; i<window.tasks.length;i++) {

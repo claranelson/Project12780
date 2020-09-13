@@ -113,20 +113,22 @@ def filter(request):
     tasks = Task.objects.filter(**kwargs)
 
     #now this is just like loadtasks again
-    result = ""
-    for task in tasks:
-        result = result + str(task.id) + ","
-        result = result + task.TaskName + ","
-        result = result + task.Description + ","
-        result = result + str(task.StartDate) + ","
-        result = result + str(task.DueDate) + ","
-        result = result + task.Categories + ","
-        result = result + str(task.Status) + ","
-        result = result + str(task.Progress) + ";"
 
-    result = result[:-1]  # to remove last semicolon
+    json = serializers.serialize('json',tasks)
+    # result = ""
+    # for task in tasks:
+    #     result = result + str(task.id) + ","
+    #     result = result + task.TaskName + ","
+    #     result = result + task.Description + ","
+    #     result = result + str(task.StartDate) + ","
+    #     result = result + str(task.DueDate) + ","
+    #     result = result + task.Categories + ","
+    #     result = result + str(task.Status) + ","
+    #     result = result + str(task.Progress) + ";"
 
-    return HttpResponse(result)
+    # result = result[:-1]  # to remove last semicolon
+
+    return HttpResponse(json)
 
 def loadCats(request):
     cats = Category.objects.all()

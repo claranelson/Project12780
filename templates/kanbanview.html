@@ -27,7 +27,7 @@
 	<h1>Kanban View</h1>
 
     <p>Welcome to the Kanban view. Here you can see all your tasks on cards sorted by their status.</p>
-    <p>To edit a task, double click its card. To change the status of a task, drag it to the column of the new status. To add a task, click the button in the menu bar.</p>
+    <p>To edit a task, double click its card. To change the status of a task, drag it to the column of the new status. It may be necessary to drop it above another card. To add a task, click the button in the menu bar.</p>
     <p>To filter tasks, use the filter bar to select the task name, status, or category you want to filter by. You can also filter for the tasks that are currently applicable, for which the current date is after their start date and before their due date.</p>
 
     <h3>Filter:</h3>
@@ -46,7 +46,7 @@
     <div id = "addtask">
         <h3>Add Task</h3>
         <table>
-            <tr><td>Task ID:</td><td><input id="taskid" style="width:150px"></td></tr>
+            <tr style="visibility:collapse"><td>Task ID:</td><td><input id="taskid" style="width:150px"></td></tr>
             <tr><td>Task Name:</td><td><input id = "taskname" style="width:150px"></td></tr>
             <tr><td>Description:</td><td><input id = "taskdesc" style="width:150px"></td></tr>
             <tr><td>Start Date:</td><td><input id = "startdate" style="width:150px"></td></tr>
