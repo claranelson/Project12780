@@ -39,6 +39,7 @@ function loadcats(callback) { //pass loadtasks as the callback argument function
     //create categories
     var xhttp = new XMLHttpRequest();
         catslist = []; //global variable declaration
+        // tasks = []; //global variable declaration
         xhttp.onreadystatechange = function()
         {
             if(xhttp.readyState == 4 && xhttp.status == 200)
@@ -82,13 +83,14 @@ function loadtasks() {
     //many parts of this code were modelled after the drawings example used in close
     $("#addtask").hide();
     var xhttp = new XMLHttpRequest();
-    tasks = []; //global variable declaration
+    window.tasks = []; //global variable declaration
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {   //parse string to get tasks
             var JSONstring = xhttp.responseText;
             var json_obj = JSON.parse(JSONstring);
             createcards(json_obj);
+            // console.log(window.tasks);
 
 
 
@@ -143,7 +145,7 @@ function createcards(list) {
 
     for (var i = 0; i < list.length; i++) {
         task = createCard(list[i]);
-        tasks.push(task);
+        window.tasks.push(task);
 
 
     }
@@ -160,7 +162,8 @@ function createCard(list_task) {
 
     var card_info = $('<ul/>');
 
-    card_fields = ["TaskName", "Categories","DueDate", "Status"];
+    card_fields = ["TaskName", "Categories","DueDate", "Status", "Description","StartDate","Progress"];
+    show_field = ["TaskName", "Categories","DueDate"]
     card_labels = ["Name", "Category", "Due Date"];
 
     fields = list_task["fields"];
@@ -187,6 +190,11 @@ function createCard(list_task) {
             field_li = $('<li/>');
             field_li.html(card_labels[colIndex]+ ": " + String(val));
             card_info.append(field_li);
+            if (show_field.indexOf(colname) < 0) {// check if colname in show_field list
+                //if it's not in the list
+                field_li.css("visibility","hidden");
+
+            }
         }
         
 
@@ -202,22 +210,24 @@ function createCard(list_task) {
     console.log(catslist);
     //find the category color
     for (var j = 0; j<catslist.length;j++) { //cycle through categories and see if the category of the task matches the category of each category object
-        console.log(j);
-        console.log(task.Categories);
-        console.log(catslist[j].catname);
+        if (j==0) {
+            console.log(catslist[j]);
+            console.log(task.Categories);
+            console.log(task.Categories.length);
+        }
         if (catslist[j].catname == task.Categories) { //if it matches
             //set catcol to the color for that category
             category_color = catslist[j].catcolor;
-            console.log(category_color);
+
         }
     }
-
+    console.log(category_color);
     //add attributes
     card.addClass("card");
     card.css("background-color",category_color);
     card_info.addClass("card_info");
     card.append(card_info);
-    // card.dblclick(edittaskopen(id));
+    card.attr("ondblclick", "edittaskopen(" + String(db_id)+ ")");
 
     if (task.Status == "Not started") {
         var tagname = "#Not_Startedul";
@@ -305,22 +315,24 @@ function edittaskopen(idarg) {
     $("#add").hide(); //hide the add task button
     var index = 0;
     //find the index of the task in the tasks global variable that was created when tasks were loaded
-    for(var i = 0; i<tasks.length;i++) {
-        if (tasks[i].id==idarg.toString()) {
+    for(var i = 0; i<window.tasks.length;i++) {
+        if (window.tasks[i].id==idarg.toString()) {
             index = i;
         }
     }
+    console.log(window.tasks);
+    console.log(currenttask);
     //grab the task object from the list using that index
-    var currenttask = tasks[index];
+    var currenttask = window.tasks[index];
 
     //fill the input boxes with the task attributes
-    $("#taskdesc").val(currenttask.description);
-    $("#taskname").val(currenttask.taskname);
-    $("#duedate").val(currenttask.duedate);
-    $("#startdate").val(currenttask.startdate);
-    $("#cats").val(currenttask.category);
-    $("#prog").val(currenttask.progressy);
-    $("#stat").val(currenttask.stat);
+    $("#taskdesc").val(currenttask.Description);
+    $("#taskname").val(currenttask.TaskName);
+    $("#duedate").val(currenttask.DueDate);
+    $("#startdate").val(currenttask.StartDate);
+    $("#cats").val(currenttask.Categories);
+    $("#prog").val(currenttask.Progress);
+    $("#stat").val(currenttask.Status);
     $("#taskid").val(currenttask.id);
 }
 
