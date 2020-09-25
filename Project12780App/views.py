@@ -132,15 +132,16 @@ def filter(request):
 
 def loadCats(request):
     cats = Category.objects.all()
-    result = ""
-    for cat in cats:
-        result = result + str(cat.id) + ","
-        result = result + cat.CatName + ","
-        result = result + cat.Color + ";"
+    # result = ""
+    # for cat in cats:
+    #     result = result + str(cat.id) + ","
+    #     result = result + cat.CatName + ","
+    #     result = result + cat.Color + ";"
 
-    result = result[:-1]  # to remove last semicolon
+    # result = result[:-1]  # to remove last semicolon
+    json = serializers.serialize('json',cats)
 
-    return HttpResponse(result)
+    return HttpResponse(json)
 
 def addCategory(request):
     catname = request.GET["CatName"]

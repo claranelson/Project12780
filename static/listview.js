@@ -7,37 +7,48 @@ $(document).ready(function(){
 
 function loadcats() {
     var xhttp = new XMLHttpRequest();
-
+    catslist = [];
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {
             //split JSON string
             var JSONstring = xhttp.responseText;
-            var categorystrings = JSONstring.split(";");
+            var json_obj = JSON.parse(JSONstring);
 
-            //get the select boxes that will be filled with the category names
+            //grab the select boxes that will need to be filled
             var categoryselect = $("#cats");
             var filterselect = $("#catfilt");
+            filterselect.append($('<option/>'));
+            
 
-            optionstring = "<option>N/A</option>"; //set initial option in string
-            for(var i = 0; i<categorystrings.length;i++)
-            {
-                //split the category into the different category attributes
-                var catstring = categorystrings[i];
-                var attributeStrings = catstring.split(",");
+            for (var i = 0; i < json_obj.length;i++) {
+                var category = json_obj[i]["fields"];
+                var newcat = new Category(json_obj[i]["pk"],category.CatName,category.Color);
+                catslist.push(newcat);
 
-                //form string of the category names as HTML options
-                optionstring = optionstring + "<option>" + attributeStrings[1] + "</option>";
-
+                var newopt = $('<option/>');
+                newopt.html(newcat.catname);
+                // console.log(newopt);
+                categoryselect.append($('<option>', {
+                    value: newcat.catname,
+                    text: newcat.catname
+                }));
+                categoryselect.append(newopt);
+                filterselect.append(newopt);
             }
-            //fill the select boxes
-            categoryselect.html(optionstring);
-            filterselect.html(optionstring);
+            
         }
 
     };
     xhttp.open("GET", "/loadCats/", true); //AJAX request to load categories
     xhttp.send();
+}
+
+function Category(id,name,color) {
+    //category object
+    this.catid = id;
+    this.catname = name;
+    this.catcolor = color;
 }
 
 function Task(id,name, des,start,due,cat,stat,prog)

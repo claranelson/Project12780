@@ -45,30 +45,50 @@ function loadcats(callback) { //pass loadtasks as the callback argument function
             if(xhttp.readyState == 4 && xhttp.status == 200)
             {   //parse the string returned by the http.responseText
                 //this code was modelled after examples used in class for the drawing management system
+                // var JSONstring = xhttp.responseText;
+                // var categorystrings = JSONstring.split(";");
                 var JSONstring = xhttp.responseText;
-                var categorystrings = JSONstring.split(";");
+                var json_obj = JSON.parse(JSONstring);
 
                 //grab the select boxes that will need to be filled
                 var categoryselect = $("#cats");
                 var filterselect = $("#catfilt");
+                filterselect.append($('<option/>'));
+                // categoryselect.append($('<option/>'));
 
-                optionstring = "<option>N/A</option>"; //add initial option
+                // optionstring = "<option>N/A</option>"; //add initial option
 
-                for(var i = 0; i<categorystrings.length;i++) {
+                for (var i = 0; i < json_obj.length;i++) {
+                    var category = json_obj[i]["fields"];
+                    var newcat = new Category(json_obj[i]["pk"],category.CatName,category.Color);
+                    catslist.push(newcat);
 
-                    var catstring = categorystrings[i];
-                    var attributeStrings = catstring.split(",");
-
-                    //Create category object
-                    var newcat = new Category(attributeStrings[0],attributeStrings[1],attributeStrings[2]);
-                    catslist.push(newcat); //add category to global variable catslist so that the colors can be retrieved
-
-                    //create string that can be added to the relevent select boxes
-                    optionstring = optionstring + "<option>" + attributeStrings[1] + "</option>";
-
+                    var newopt = $('<option/>');
+                    newopt.html(newcat.catname);
+                    console.log(newopt);
+                    categoryselect.append($('<option>', {
+                        value: newcat.catname,
+                        text: newcat.catname
+                    }));
+                    // categoryselect.append(newopt);
+                    filterselect.append(newopt);
                 }
-                categoryselect.html(optionstring);
-                filterselect.html(optionstring);
+
+                // for(var i = 0; i<categorystrings.length;i++) {
+
+                //     var catstring = categorystrings[i];
+                //     var attributeStrings = catstring.split(",");
+
+                //     //Create category object
+                //     var newcat = new Category(attributeStrings[0],attributeStrings[1],attributeStrings[2]);
+                //     catslist.push(newcat); //add category to global variable catslist so that the colors can be retrieved
+
+                //     //create string that can be added to the relevent select boxes
+                //     optionstring = optionstring + "<option>" + attributeStrings[1] + "</option>";
+
+                // }
+                // categoryselect.html(optionstring);
+                // filterselect.html(optionstring);
                 callback(); //calls the loadtasks function
 
             }
@@ -402,12 +422,35 @@ function addTask() {
 
         }};
     //send http with task attributes
-    xhttp2.open("GET", "/addTask?TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
-    xhttp2.send();
+    // xhttp2.open("GET", "/addTask?", true);
+    // var csrftoken = getCookie('csrftoken'); 
+    xhttp2.open("POST", "/addTask/");
+    xhttp2.send("TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat)
+
+
+    // xhttp2.send();
 
     $("#addtask").hide();
 
     }
+
+// from Django docs to get csrf token using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
 function editTask() {
 
@@ -458,6 +501,7 @@ function canceladdtask() {
 function showtaskentry() {
     //open the task entry menu
     $("#addtask").show();
+    $("#add").show();
     $("#edit").hide(); //hide the edit task button
 
     //ensure the values are clear
