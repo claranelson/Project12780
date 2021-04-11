@@ -51,22 +51,40 @@ function Category(id,name,color) {
     this.catcolor = color;
 }
 
-function Task(id,name, des,start,due,cat,stat,prog)
-{ //Task object
-    this.id = id;
-    this.TaskName = name;
-    this.Description = des;
-    this.StartDate = start;
-    this.DueDate = due;
-    this.Categories = cat;
-    this.Status = stat;
-    this.Progress =prog;
+//function Task(id,name, descriptions,start,due,category,status,progress)
+//{ //Task object
+//    this.id = id;
+//    this.TaskName = name;
+//    this.Description = descriptions;
+//    this.StartDate = start;
+//    this.DueDate = due;
+//    this.Categories = category;
+//    this.Status = status;
+//    this.Progress =progress;
+//}
+
+class Task {
+    constructor() {
+        //todo: assign default values in task
+    }
+
+    assignProperties(id,name, descriptions,start,due,category,status,progress) {
+        this.id = id;
+        this.TaskName = name;
+        this.Description = descriptions;
+        this.StartDate = start;
+        this.DueDate = due;
+        this.Categories = category;
+        this.Status = status;
+        this.Progress =progress;
+    }
+
 }
 
 function showtaskentry() { //open the add task section
     $("#addtask").show(); //show div
     $("#add").show(); //show the add task button
-    $("#edit").hide(); //hide the edit taek button
+    $("#edit").hide(); //hide the edit task button
 }
 
 function canceladdtask() { //cancel the add or edit task window.
@@ -138,43 +156,105 @@ function constructTable(list, selector) {
 		row.attr('onClick', 'edittaskopen('+ String(db_id)+')');
 		// Adding each row to the table 
 		$(selector).append(row); 
-        tasks.push(task)
+        tasks.push(task);
 	} 
 	return tasks;
+}
+
+function clearInputs(inputList) {
+    inputList.forEach(input => {
+        $(input).val("");
+    })
+}
+
+function mapIdToProperty(inputId) {
+    const map = {
+        "#taskdesc": "Description",
+        "#taskname": "TaskName",
+        "#duedate": "DueDate",
+        "#startdate": "StartDate",
+        "#cats": "Categories",
+        "#prog": "Progress",
+        "#stat": "Status"
+    };
+    return map[inputId];
+}
+
+function pullTaskInputs(inputList) {
+
+    const newTask = new Task();
+
+    inputList.forEach(input => {
+        const propertyValue = $(input).val();
+        const propertyName = mapIdToProperty(input);
+        newTask[propertyName] = propertyValue;
+    })
+
+    return newTask
 }
 
 function addTask() {
 
     var xhttp2 = new XMLHttpRequest();
 
+    var inputIdList = ["#taskdesc", "#taskname", "#duedate",
+        "#startdate", "#cats", "#prog", "#stat"
+    ];
+
     //pull values from task input boxes
-    var descr = $("#taskdesc").val();
-    var name = $("#taskname").val();
-    var due = $("#duedate").val();
-    var start = $("#startdate").val();
-    var cat = $("#cats").val();
-    var prog = $("#prog").val();
-    var stat = $("#stat").val();
+
+    //NEW
+    newTask = pullTaskInputs(inputIdList);
+//    console.log(newTask)
+    //OLD
+//    var descr = $("#taskdesc").val();
+//    var name = $("#taskname").val();
+//    var due = $("#duedate").val();
+//    var start = $("#startdate").val();
+//    var cat = $("#cats").val();
+//    var prog = $("#prog").val();
+//    var stat = $("#stat").val();
+
+    //Make FormData Object
+    //resource: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
+    const FD = new FormData();
+    for (property in newTask) {
+        FD.append(property, newTask[property]);
+        console.log(property)
+        console.log(newTask[property])
+    }
+//    for (var [key, value] of FD.entries()) {
+//        console.log(key, value);
+//    }
+
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
             //reset the list view table
-            reset()
+            reset();
 
         }};
     //send attributes to be added to the database
-    xhttp2.open("GET", "/addTask?TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
-    xhttp2.send();
+//    xhttp2.open("GET", "/addTask?TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
+    xhttp2.open("POST", "/addTask/", true);
+    console.log("about to send http post")
+    xhttp2.send(FD);
+    console.log("sent http post")
     $("#addtask").hide(); //hide the div so it disappears
 
     //clear the values of the task input boxes
-    $("#taskdesc").val("");
-    $("#taskname").val("");
-    $("#duedate").val("");
-    $("#startdate").val("");
-    $("#cats").val("");
-    $("#prog").val("");
-    $("#stat").val("");
+    //NEW (to be tested)
+    clearInputs(inputIdList)
+    console.log("cleared inputs")
+
+    //OLD
+//    $("#taskdesc").val("");
+//    $("#taskname").val("");
+//    $("#duedate").val("");
+//    $("#startdate").val("");
+//    $("#cats").val("");
+//    $("#prog").val("");
+//    $("#stat").val("");
 
 }
 

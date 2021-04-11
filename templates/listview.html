@@ -45,6 +45,7 @@
     <div id = "addtask">
         <h3>Add/Edit Task</h3>
 		<p>Please note that Task Name, Start Date, Due Date, Category, Status, and Progress are all required entries. If these are not filled in, the task will not add correctly to the database.</p>
+        <form id = "addTaskForm">
         <table>
 
             <tr class="hidden"><td class="hidden">Task ID:</td>
@@ -69,6 +70,7 @@
                     </select></td></tr>
 
         </table>
+        </form>
 
         <button id = "add" onclick = "addTask()">Add Task</button>
         <button id = "edit" onclick = "editTask()">Edit Task</button>

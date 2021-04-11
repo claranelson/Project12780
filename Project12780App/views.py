@@ -39,15 +39,14 @@ def loadTasks(request):
     return HttpResponse(json)
 
 def addTask(request):
-    taskname = request.GET["TaskName"]
-    descrip = request.GET["Description"]
-    duey = request.GET["DueDate"]
-    starty = request.GET["StartDate"]
-    catty = request.GET["Categories"]
-    prog = request.GET["Progress"]
-    stat = request.GET["Status"]
 
-    newtask = Task(TaskName = taskname, Description = descrip, DueDate = duey, StartDate= starty, Categories = catty, Progress = prog, Status = stat)
+    newtask = Task(TaskName = request.POST["TaskName"],
+                   Description = request.POST["Description"],
+                   DueDate = request.POST["DueDate"],
+                   StartDate= request.POST["StartDate"],
+                   Categories = request.POST["Categories"],
+                   Progress = request.POST["Progress"],
+                   Status = request.POST["Status"])
     newtask.save()
 
     return HttpResponse("")
