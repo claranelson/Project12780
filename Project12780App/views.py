@@ -52,22 +52,17 @@ def addTask(request):
     return HttpResponse("")
 
 def editTask(request):
-    taskname = request.GET["TaskName"]
-    descrip = request.GET["Description"]
-    duey = request.GET["DueDate"]
-    starty = request.GET["StartDate"]
-    catty = request.GET["Categories"]
-    prog = request.GET["Progress"]
-    stat = request.GET["Status"]
-    idget = request.GET["ID"]
+    json_str = request.body
+    json_obj = json.loads(json_str)
+    idget = json_obj["ID"]
     t = Task.objects.get(id=idget)
-    t.TaskName = taskname
-    t.Description = descrip
-    t.DueDate = duey
-    t.Status = stat
-    t.StartDate = starty
-    t.Categories = catty
-    t.Progress = prog
+    t.TaskName = json_obj["TaskName"]
+    t.Description = json_obj["Description"]
+    t.DueDate = json_obj["DueDate"]
+    t.StartDate = json_obj["StartDate"]
+    t.Categories = json_obj["Categories"]
+    t.Progress = json_obj["Progress"]
+    t.Status = json_obj["Status"]
     t.save()
     #some of this from https://stackoverflow.com/questions/3681627/how-to-update-fields-in-a-model-without-creating-a-new-record-in-django
 

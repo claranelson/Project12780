@@ -175,7 +175,8 @@ function mapIdToProperty(inputId) {
         "#startdate": "StartDate",
         "#cats": "Categories",
         "#prog": "Progress",
-        "#stat": "Status"
+        "#stat": "Status",
+        "#taskid": "ID",
     };
     return map[inputId];
 }
@@ -204,7 +205,7 @@ function addTask() {
     //pull values from task input boxes
 
     //NEW
-    newTask = pullTaskInputs(inputIdList);
+    const newTask = pullTaskInputs(inputIdList);
 //    console.log(newTask)
     //OLD
 //    var descr = $("#taskdesc").val();
@@ -323,15 +324,35 @@ function editTask() {
 
     var xhttp2 = new XMLHttpRequest();
 
+    var inputIdList = ["#taskid", "#taskdesc", "#taskname", "#duedate",
+        "#startdate", "#cats", "#prog", "#stat"
+        ];
+
     //grab values in the input boxes
-    var id = $("#taskid").val();
-    var descr = $("#taskdesc").val();
-    var name = $("#taskname").val();
-    var due = $("#duedate").val();
-    var start = $("#startdate").val();
-    var cat = $("#cats").val();
-    var prog = $("#prog").val();
-    var stat = $("#stat").val();
+    editedTask = pullTaskInputs(inputIdList);
+
+    //Make FormData Object
+    //resource: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
+//    const FD = new FormData();
+//    const json_obj = {}
+//    for (property in editedTask) {
+//        json_obj[property] = editedTask[property];
+//    }
+
+//    for (var [key, value] of FD.entries()) {
+//        console.log(key, value);
+//    }
+
+    task_string = JSON.stringify(editedTask);
+
+//    var id = $("#taskid").val();
+//    var descr = $("#taskdesc").val();
+//    var name = $("#taskname").val();
+//    var due = $("#duedate").val();
+//    var start = $("#startdate").val();
+//    var cat = $("#cats").val();
+//    var prog = $("#prog").val();
+//    var stat = $("#stat").val();
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
@@ -340,19 +361,25 @@ function editTask() {
             reset()
 
         }};
-    xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
-    xhttp2.send();
+//    xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
+
+
+
+    xhttp2.open("PUT", "/editTask/", true);
+    xhttp2.setRequestHeader("Content-Type", "application/json")
+    xhttp2.send(task_string);
     $("#addtask").hide(); //hide div
 
     //reset all the input and select boxes to be blank
-    $("#taskdesc").val("");
-    $("#taskname").val("");
-    $("#duedate").val("");
-    $("#startdate").val("");
-    $("#cats").val("");
-    $("#prog").val("");
-    $("#stat").val("");
-    $("#taskid").val("");
+    clearInputs(inputIdList)
+//    $("#taskdesc").val("");
+//    $("#taskname").val("");
+//    $("#duedate").val("");
+//    $("#startdate").val("");
+//    $("#cats").val("");
+//    $("#prog").val("");
+//    $("#stat").val("");
+//    $("#taskid").val("");
 
 }
 
