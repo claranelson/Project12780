@@ -40,20 +40,21 @@ def loadTasks(request):
 
 def addTask(request):
 
-    newtask = Task(TaskName = request.POST["TaskName"],
-                   Description = request.POST["Description"],
-                   DueDate = request.POST["DueDate"],
-                   StartDate= request.POST["StartDate"],
-                   Categories = request.POST["Categories"],
-                   Progress = request.POST["Progress"],
-                   Status = request.POST["Status"])
+    json_obj = json.loads(request.body)
+
+    newtask = Task(TaskName = json_obj["TaskName"],
+                   Description = json_obj["Description"],
+                   DueDate = json_obj["DueDate"],
+                   StartDate= json_obj["StartDate"],
+                   Categories = json_obj["Categories"],
+                   Progress = json_obj["Progress"],
+                   Status = json_obj["Status"])
     newtask.save()
 
     return HttpResponse("")
 
 def editTask(request):
-    json_str = request.body
-    json_obj = json.loads(json_str)
+    json_obj = json.loads(request.body)
     idget = json_obj["ID"]
     t = Task.objects.get(id=idget)
     t.TaskName = json_obj["TaskName"]

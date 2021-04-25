@@ -206,6 +206,7 @@ function addTask() {
 
     //NEW
     const newTask = pullTaskInputs(inputIdList);
+    task_string = JSON.stringify(newTask);
 //    console.log(newTask)
     //OLD
 //    var descr = $("#taskdesc").val();
@@ -218,12 +219,12 @@ function addTask() {
 
     //Make FormData Object
     //resource: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
-    const FD = new FormData();
-    for (property in newTask) {
-        FD.append(property, newTask[property]);
-        console.log(property)
-        console.log(newTask[property])
-    }
+//    const FD = new FormData();
+//    for (property in newTask) {
+//        FD.append(property, newTask[property]);
+//        console.log(property)
+//        console.log(newTask[property])
+//    }
 //    for (var [key, value] of FD.entries()) {
 //        console.log(key, value);
 //    }
@@ -239,7 +240,7 @@ function addTask() {
 //    xhttp2.open("GET", "/addTask?TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
     xhttp2.open("POST", "/addTask/", true);
     console.log("about to send http post")
-    xhttp2.send(FD);
+    xhttp2.send(task_string);
     console.log("sent http post")
     $("#addtask").hide(); //hide the div so it disappears
 
