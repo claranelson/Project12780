@@ -113,45 +113,6 @@ function loadtasks() {
             // console.log(window.tasks);
 
 
-
-            // for(var i = 0; i<tasksstrings.length;i++)
-            // {
-            //     catcol = "white"; //set in case there's no cat color
-
-            //     //split each task into its task attributes
-            //     var taskstring = tasksstrings[i];
-            //     var attributeStrings = taskstring.split(",");
-
-            //     //create task attribute
-            //     var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-            //     tasks.push(newTask); //add to task list
-
-            //     for (var j = 0; j<catslist.length;j++) { //cycle through categories and see if the category of the task matches the category of each category object
-
-            //         if (catslist[j].catname == attributeStrings[5]) { //if it matches
-            //             //set catcol to the color for that category
-            //             var catcol = catslist[j].catcolor;
-            //         }
-            //     }
-            //     //create string of list, which is the card, to be added to the proper column
-            //     //also set the color, the on double click event, and the class to card
-            //     //add the proper task attributes to the card
-            //     strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + 
-            //     "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "
-            //     +attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
-
-            //     //find the the id of the column corresponding to the task's status
-            //     if (attributeStrings[6] == "Not started") {
-            //         var tagname = "#Not_Startedul";
-            //     } else if (attributeStrings[6] == "In Progress"){
-            //          var tagname = "#In_Progressul";
-            //     }else {
-            //         var tagname = "#Completeul";
-            //     }
-            //     $(tagname).append(strTask); //add task to column
-
-            // }
-
         }
 
     };
@@ -288,36 +249,6 @@ function filter() {
             var JSONstring = xhttp.responseText;
             var json_obj = JSON.parse(JSONstring);
             createcards(json_obj);
-            
-            
-
-
-            // for(var i = 0; i<tasksstrings.length;i++)
-            // {
-
-            //     catcol = "white"; //set to white in case there is no color
-            //     var taskstring = tasksstrings[i];
-            //     var attributeStrings = taskstring.split(",");
-
-            //     var newTask = new Task(attributeStrings[0],attributeStrings[1],attributeStrings[2],attributeStrings[3],attributeStrings[4],attributeStrings[5],attributeStrings[6],attributeStrings[7]);
-            //     tasks.push(newTask);
-            //     var status = attributeStrings[7];
-
-            //     for (var j = 0; j<catslist.length;j++) {
-            //         if (catslist[j].catname == attributeStrings[5]) {
-            //             var catcol = catslist[j].catcolor;
-            //         }
-            //     }
-            //     strTask = "<li ondblclick = edittaskopen(" + attributeStrings[0] + ") style='background-color:"+ catcol + "' class='card'><ul style='list-style:none;padding-left:0;'><li id = 'taskid' style = 'visibility:hidden;'>"+attributeStrings[0]+"</li><li>Name: "+attributeStrings[1]+"</li><li>Category: " + attributeStrings[5]+ "</li><li>Due Date: " + attributeStrings[4] + "</li></ul></li>";
-
-            //     if (attributeStrings[6] == "Not started") {
-            //         var tagname = "#Not_Startedul";
-            //     } else if (attributeStrings[6] == "In Progress"){
-            //          var tagname = "#In_Progressul";
-            //     }else {
-            //         var tagname = "#Completeul";
-            //     }
-            //     $(tagname).append(strTask); //add task to column
 
             // }
 

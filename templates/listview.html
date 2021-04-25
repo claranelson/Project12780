@@ -11,12 +11,13 @@
   src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
   integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
   crossorigin="anonymous"></script>
-    <script src="/static/listview.js"></script>
+    <script type="module" src="/static/global.js"></script>
+    <script type="module" src="/static/listview.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/listview.css">
     <link rel="stylesheet" type="text/css" href="/static/universal.css">
     <title>List View</title>
 </head>
-<body onload = loadtasks()>
+<body>
     <div class = "tabs">
         <button class = "menu"><a href="http://127.0.0.1:8000/kanbanview">Kanban View</a></button>
         <button class = "menu" id="showtasks" onclick="showtaskentry()">Add Task</button>

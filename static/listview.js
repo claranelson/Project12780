@@ -1,13 +1,19 @@
+//import {reset_tasks, loadtasks, pullTaskInputs, mapIdToProperty, clearInputs, addTask, editTask, emptytasks} from './global.js';
+import * as global_module from './global.js';
+
+//const tasks = []
+
 $(document).ready(function(){
     //make the appropriate input boxes into jQuery UI datepickers
     $("#startdate").datepicker({dateFormat: "yy-mm-dd"});
     $("#duedate").datepicker({dateFormat: "yy-mm-dd"});
-    loadcats()
+    loadcats();
+    global_module.loadtasks('listview.html');
   });
 
 function loadcats() {
     var xhttp = new XMLHttpRequest();
-    catslist = [];
+    const catslist = [];
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {
@@ -79,30 +85,30 @@ function showtaskentry() { //open the add task section
 function canceladdtask() { //cancel the add or edit task window.
     $("#addtask").hide(); //hide the div
 }
-
-function loadtasks() {
-    //load tasks into table for initial page load
-    $("#addtask").hide();
-    var xhttp = new XMLHttpRequest();
-    tasks = []; //create global variable
-    console.log("______-----______-----_____-----");
-    xhttp.onreadystatechange = function() {
-        if(xhttp.readyState == 4 && xhttp.status == 200) {
-            //parse the response string JSON and sent to constructTable to make the table
-            var JSONstring = xhttp.responseText;
-            var json_obj = JSON.parse(JSONstring);
-            tasks = constructTable(json_obj, "#listviewtable");
-        }
-
-    };
-    xhttp.open("GET", "/loadTasks/", true);
-    xhttp.send();
-}
+//
+//function loadtasks() {
+//    //load tasks into table for initial page load
+//    $("#addtask").hide();
+//    var xhttp = new XMLHttpRequest();
+//    tasks = []; //create global variable
+//    console.log("______-----______-----_____-----");
+//    xhttp.onreadystatechange = function() {
+//        if(xhttp.readyState == 4 && xhttp.status == 200) {
+//            //parse the response string JSON and sent to constructTable to make the table
+//            var JSONstring = xhttp.responseText;
+//            var json_obj = JSON.parse(JSONstring);
+//            tasks = constructTable(json_obj, "#listviewtable");
+//        }
+//
+//    };
+//    xhttp.open("GET", "/loadTasks/", true);
+//    xhttp.send();
+//}
 
 function constructTable(list, selector) { 
 	// reference from https://www.geeksforgeeks.org/how-to-convert-json-data-to-a-html-table-using-javascript-jquery/
 	// Getting the all column names 
-	tasks = []
+	window.tasks = []
 	//construct header
 	var colnames = ["ID","Task Name","Description","Start Date","Due Date","Categories","Progress","Status"];
 	
@@ -150,75 +156,71 @@ function constructTable(list, selector) {
 	return tasks;
 }
 
-function clearInputs(inputList) {
-    inputList.forEach(input => {
-        $(input).val("");
-    })
-}
+//function clearInputs(inputList) {
+//    inputList.forEach(input => {
+//        $(input).val("");
+//    })
+//}
 
-function mapIdToProperty(inputId) {
-    const map = {
-        "#taskdesc": "Description",
-        "#taskname": "TaskName",
-        "#duedate": "DueDate",
-        "#startdate": "StartDate",
-        "#cats": "Categories",
-        "#prog": "Progress",
-        "#stat": "Status",
-        "#taskid": "ID",
-    };
-    return map[inputId];
-}
+//function mapIdToProperty(inputId) {
+//    const map = {
+//        "#taskdesc": "Description",
+//        "#taskname": "TaskName",
+//        "#duedate": "DueDate",
+//        "#startdate": "StartDate",
+//        "#cats": "Categories",
+//        "#prog": "Progress",
+//        "#stat": "Status",
+//        "#taskid": "ID",
+//    };
+//    return map[inputId];
+//}
 
-function pullTaskInputs(inputList) {
-
-    const newTask = new Task();
-
-    inputList.forEach(input => {
-        const propertyValue = $(input).val();
-        const propertyName = mapIdToProperty(input);
-        newTask[propertyName] = propertyValue;
-    })
-
-    return newTask
-}
-
-function addTask() {
-
-    var xhttp2 = new XMLHttpRequest();
-
-    var inputIdList = ["#taskdesc", "#taskname", "#duedate",
-        "#startdate", "#cats", "#prog", "#stat"
-    ];
-
-    //pull values from task input boxes
-    const newTask = pullTaskInputs(inputIdList);
-    task_string = JSON.stringify(newTask);
-
-    xhttp2.onreadystatechange = function() {
-        if(xhttp2.readyState == 4 && xhttp2.status == 200) {
-            //reset the list view table
-            reset();
-        }};
-    //send attributes to be added to the database
-    xhttp2.open("POST", "/addTask/", true);
-    console.log("about to send http post")
-    xhttp2.send(task_string);
-    console.log("sent http post")
-    $("#addtask").hide(); //hide the div so it disappears
-
-    //clear the values of the task input boxes
-    clearInputs(inputIdList)
-    console.log("cleared inputs")
-
-}
+//function pullTaskInputs(inputList) {
+//
+//    const newTask = new Task();
+//
+//    inputList.forEach(input => {
+//        const propertyValue = $(input).val();
+//        const propertyName = mapIdToProperty(input);
+//        newTask[propertyName] = propertyValue;
+//    })
+//
+//    return newTask
+//}
+//
+//function addTask() {
+//
+//    var xhttp2 = new XMLHttpRequest();
+//
+//    var inputIdList = ["#taskdesc", "#taskname", "#duedate",
+//        "#startdate", "#cats", "#prog", "#stat"
+//    ];
+//
+//    //pull values from task input boxes
+//    const newTask = pullTaskInputs(inputIdList);
+//    task_string = JSON.stringify(newTask);
+//
+//    xhttp2.onreadystatechange = function() {
+//        if(xhttp2.readyState == 4 && xhttp2.status == 200) {
+//            //reset the list view table
+//            reset();
+//        }};
+//    //send attributes to be added to the database
+//    xhttp2.open("POST", "/addTask/", true);
+//    xhttp2.send(task_string);
+//    $("#addtask").hide(); //hide the div so it disappears
+//
+//    //clear the values of the task input boxes
+//    clearInputs(inputIdList)
+//
+//}
 
 function edittaskopen(idarg) {//open add/edit task div and fill in the attributes of the task being edited
-    console.log("meat1");
+
     $("#addtask").show(); //show the div
     $("#add").hide(); //ensure add task button is hidden
     $("#edit").show(); //ensure edit task button is showing
-    console.log("I made it to the meat");
 
     //find index in tasks list that corresponds to the ID of the current task
     var index = 0;
@@ -252,7 +254,7 @@ function filter() {
     //though given the number of times things in this function were changed, it actually would've probably been easier to make a function used in both
     //the load tasks function and the filter function
     //please see the loadtasks function for comments and explanations
-    tasks = [];
+    const tasks = [];
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200)
         {
@@ -273,42 +275,40 @@ function filter() {
     }
     xhttp.send();
 }
+//
+//function editTask() {
+//
+//    var xhttp2 = new XMLHttpRequest();
+//
+//    var inputIdList = ["#taskid", "#taskdesc", "#taskname", "#duedate",
+//        "#startdate", "#cats", "#prog", "#stat"
+//        ];
+//
+//    //grab values in the input boxes
+//    editedTask = pullTaskInputs(inputIdList);
+//    task_string = JSON.stringify(editedTask);
+//
+//    xhttp2.onreadystatechange = function() {
+//        if(xhttp2.readyState == 4 && xhttp2.status == 200) {
+//            //reset listview table
+//            reset()
+//        }};
+//
+//    xhttp2.open("PUT", "/editTask/", true);
+//    xhttp2.setRequestHeader("Content-Type", "application/json")
+//    xhttp2.send(task_string);
+//    $("#addtask").hide(); //hide div
+//
+//    //reset all the input and select boxes to be blank
+//    clearInputs(inputIdList)
+//}
 
-function editTask() {
-
-    var xhttp2 = new XMLHttpRequest();
-
-    var inputIdList = ["#taskid", "#taskdesc", "#taskname", "#duedate",
-        "#startdate", "#cats", "#prog", "#stat"
-        ];
-
-    //grab values in the input boxes
-    editedTask = pullTaskInputs(inputIdList);
-    task_string = JSON.stringify(editedTask);
-
-    xhttp2.onreadystatechange = function() {
-        if(xhttp2.readyState == 4 && xhttp2.status == 200) {
-
-            //reset listview table
-            reset()
-
-        }};
-
-    xhttp2.open("PUT", "/editTask/", true);
-    xhttp2.setRequestHeader("Content-Type", "application/json")
-    xhttp2.send(task_string);
-    $("#addtask").hide(); //hide div
-
-    //reset all the input and select boxes to be blank
-    clearInputs(inputIdList)
-}
-
-function reset() {
-    //reset the list view table to just be the headers
-    $('#listviewtable').empty();
-    //actually load the tasks
-    loadtasks();
-}
+//function reset() {
+//    //reset the list view table to just be the headers
+//    $('#listviewtable').empty();
+//    //actually load the tasks
+//    loadtasks();
+//}
 
 function sortTable(n) {
     // from https://www.w3schools.com/howto/howto_js_sort_table.asp
@@ -365,3 +365,5 @@ function sortTable(n) {
     }
   }
 }
+
+export {constructTable};
