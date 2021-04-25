@@ -51,17 +51,6 @@ function Category(id,name,color) {
     this.catcolor = color;
 }
 
-//function Task(id,name, descriptions,start,due,category,status,progress)
-//{ //Task object
-//    this.id = id;
-//    this.TaskName = name;
-//    this.Description = descriptions;
-//    this.StartDate = start;
-//    this.DueDate = due;
-//    this.Categories = category;
-//    this.Status = status;
-//    this.Progress =progress;
-//}
 
 class Task {
     constructor() {
@@ -203,41 +192,15 @@ function addTask() {
     ];
 
     //pull values from task input boxes
-
-    //NEW
     const newTask = pullTaskInputs(inputIdList);
     task_string = JSON.stringify(newTask);
-//    console.log(newTask)
-    //OLD
-//    var descr = $("#taskdesc").val();
-//    var name = $("#taskname").val();
-//    var due = $("#duedate").val();
-//    var start = $("#startdate").val();
-//    var cat = $("#cats").val();
-//    var prog = $("#prog").val();
-//    var stat = $("#stat").val();
-
-    //Make FormData Object
-    //resource: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
-//    const FD = new FormData();
-//    for (property in newTask) {
-//        FD.append(property, newTask[property]);
-//        console.log(property)
-//        console.log(newTask[property])
-//    }
-//    for (var [key, value] of FD.entries()) {
-//        console.log(key, value);
-//    }
-
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
             //reset the list view table
             reset();
-
         }};
     //send attributes to be added to the database
-//    xhttp2.open("GET", "/addTask?TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
     xhttp2.open("POST", "/addTask/", true);
     console.log("about to send http post")
     xhttp2.send(task_string);
@@ -245,18 +208,8 @@ function addTask() {
     $("#addtask").hide(); //hide the div so it disappears
 
     //clear the values of the task input boxes
-    //NEW (to be tested)
     clearInputs(inputIdList)
     console.log("cleared inputs")
-
-    //OLD
-//    $("#taskdesc").val("");
-//    $("#taskname").val("");
-//    $("#duedate").val("");
-//    $("#startdate").val("");
-//    $("#cats").val("");
-//    $("#prog").val("");
-//    $("#stat").val("");
 
 }
 
@@ -331,29 +284,7 @@ function editTask() {
 
     //grab values in the input boxes
     editedTask = pullTaskInputs(inputIdList);
-
-    //Make FormData Object
-    //resource: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
-//    const FD = new FormData();
-//    const json_obj = {}
-//    for (property in editedTask) {
-//        json_obj[property] = editedTask[property];
-//    }
-
-//    for (var [key, value] of FD.entries()) {
-//        console.log(key, value);
-//    }
-
     task_string = JSON.stringify(editedTask);
-
-//    var id = $("#taskid").val();
-//    var descr = $("#taskdesc").val();
-//    var name = $("#taskname").val();
-//    var due = $("#duedate").val();
-//    var start = $("#startdate").val();
-//    var cat = $("#cats").val();
-//    var prog = $("#prog").val();
-//    var stat = $("#stat").val();
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
@@ -362,9 +293,6 @@ function editTask() {
             reset()
 
         }};
-//    xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
-
-
 
     xhttp2.open("PUT", "/editTask/", true);
     xhttp2.setRequestHeader("Content-Type", "application/json")
@@ -373,15 +301,6 @@ function editTask() {
 
     //reset all the input and select boxes to be blank
     clearInputs(inputIdList)
-//    $("#taskdesc").val("");
-//    $("#taskname").val("");
-//    $("#duedate").val("");
-//    $("#startdate").val("");
-//    $("#cats").val("");
-//    $("#prog").val("");
-//    $("#stat").val("");
-//    $("#taskid").val("");
-
 }
 
 function reset() {
