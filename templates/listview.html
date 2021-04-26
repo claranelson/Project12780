@@ -20,7 +20,7 @@
 <body>
     <div class = "tabs">
         <button class = "menu"><a href="http://127.0.0.1:8000/kanbanview">Kanban View</a></button>
-        <button class = "menu" id="showtasks" onclick="showtaskentry()">Add Task</button>
+        <button class = "menu" id="showtasks">Add Task</button>
         <button class = "menu last"><a href="http://127.0.0.1:8000/categorymaker">Add Category</a></button>
     </div>
 
@@ -39,8 +39,8 @@
         <option value = "In Progress">In Progress</option><option value = "Complete">Complete</option></select>
         <label class = "filt">Current?</label><select class = "filt" id = "currentfilt" style="width:100px"><option value = None>None</option><option value = "Yes">Yes</option></select>
         <label class = "filt">Category: </label><select class = "filt" id = "catfilt" style="width:100px"></select>
-        <button class = "filt" onclick = "filter()">Filter</button>
-        <button class = "filt last" onclick = "reset()" style = "width:150px">Reset Filter</button>
+        <button class = "filt" id = "filter_button">Filter</button>
+        <button class = "filt last" id="reset_button" style = "width:150px">Reset Filter</button>
     </div>
 
     <div id = "addtask">
@@ -73,9 +73,9 @@
         </table>
         </form>
 
-        <button id = "add" onclick = "addTask()">Add Task</button>
-        <button id = "edit" onclick = "editTask()">Edit Task</button>
-        <button onclick = "canceladdtask()" style = "width:180px">Cancel Add/Edit Task</button>
+        <button id = "add">Add Task</button>
+        <button id = "edit">Edit Task</button>
+        <button id = "cancel_addedit" style = "width:180px">Cancel Add/Edit Task</button>
     </div>
 
     <div id = "listview">

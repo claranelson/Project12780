@@ -1,13 +1,41 @@
 import {constructTable} from './listview.js'
 
-function reset_tasks() {
-    source_page = location.pathname.split('/').pop();
+export function reset_tasks() {
+    const source_page = location.pathname.split('/').pop();
+    console.log(source_page);
     emptytasks(source_page);
     loadtasks(source_page);
 
 }
 
-function loadtasks(source_page) {
+export function Category(id,name,color) {
+    //category object
+    this.catid = id;
+    this.catname = name;
+    this.catcolor = color;
+}
+
+
+export class Task {
+    constructor() {
+        //todo: assign default values in task
+    }
+
+    assignProperties(id,name, descriptions,start,due,category,status,progress) {
+        this.id = id;
+        this.TaskName = name;
+        this.Description = descriptions;
+        this.StartDate = start;
+        this.DueDate = due;
+        this.Categories = categsory;
+        this.Status = status;
+        this.Progress =progress;
+    }
+
+}
+
+
+export function loadtasks(source_page) {
 
     //load tasks into table for initial page load
     $("#addtask").hide();
@@ -33,7 +61,7 @@ function loadtasks(source_page) {
 
 }
 
-function pullTaskInputs(inputList) {
+export function pullTaskInputs(inputList) {
 
     const newTask = new Task();
 
@@ -46,7 +74,7 @@ function pullTaskInputs(inputList) {
     return newTask
 }
 
-function mapIdToProperty(inputId) {
+export function mapIdToProperty(inputId) {
     const map = {
         "#taskdesc": "Description",
         "#taskname": "TaskName",
@@ -60,13 +88,13 @@ function mapIdToProperty(inputId) {
     return map[inputId];
 }
 
-function clearInputs(inputList) {
+export function clearInputs(inputList) {
     inputList.forEach(input => {
         $(input).val("");
     })
 }
 
-function addTask() {
+export function addTask() {
 
     var xhttp2 = new XMLHttpRequest();
 
@@ -76,7 +104,7 @@ function addTask() {
 
     //pull values from task input boxes
     const newTask = pullTaskInputs(inputIdList);
-    task_string = JSON.stringify(newTask);
+    const task_string = JSON.stringify(newTask);
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
@@ -93,7 +121,7 @@ function addTask() {
 
 }
 
-function editTask() {
+export function editTask() {
 
     var xhttp2 = new XMLHttpRequest();
     var inputIdList = ["#taskid", "#taskdesc", "#taskname", "#duedate",
@@ -101,8 +129,8 @@ function editTask() {
         ];
 
     //grab values in the input boxes
-    editedTask = pullTaskInputs(inputIdList);
-    task_string = JSON.stringify(editedTask);
+    const editedTask = pullTaskInputs(inputIdList);
+    const task_string = JSON.stringify(editedTask);
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {
@@ -119,7 +147,7 @@ function editTask() {
     clearInputs(inputIdList)
 }
 
-function emptytasks(source_page) {
+export function emptytasks(source_page) {
     if (source_page == 'listview.html') {
         $('#listviewtable').empty();
     } else if (source_page == 'kanbanview.html') {
@@ -130,4 +158,4 @@ function emptytasks(source_page) {
 
 }
 
-export {reset_tasks, loadtasks, pullTaskInputs, mapIdToProperty, clearInputs, addTask, editTask, emptytasks};
+//export {reset_tasks, loadtasks, pullTaskInputs, mapIdToProperty, clearInputs, addTask, editTask, emptytasks};

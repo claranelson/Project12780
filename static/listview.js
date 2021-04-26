@@ -1,15 +1,26 @@
 //import {reset_tasks, loadtasks, pullTaskInputs, mapIdToProperty, clearInputs, addTask, editTask, emptytasks} from './global.js';
 import * as global_module from './global.js';
-
-//const tasks = []
+//import {Task} from './global.js';
 
 $(document).ready(function(){
     //make the appropriate input boxes into jQuery UI datepickers
     $("#startdate").datepicker({dateFormat: "yy-mm-dd"});
     $("#duedate").datepicker({dateFormat: "yy-mm-dd"});
+
+    //define button click methods
+    $("#showtasks").click(showtaskentry);
+    $("#filter_button").click(filter);
+    $("#reset_button").click(reset_filter);
+    $("#cancel_addedit").click(canceladdtask);
+    $("#add").click(global_module.addTask);
+    $("#edit").click(global_module.editTask);
     loadcats();
     global_module.loadtasks('listview.html');
   });
+
+function reset_filter() {
+    //todo: fill in with old reset function (I think I overwrote it)
+}
 
 function loadcats() {
     var xhttp = new XMLHttpRequest();
@@ -29,7 +40,7 @@ function loadcats() {
 
             for (var i = 0; i < json_obj.length;i++) {
                 var category = json_obj[i]["fields"];
-                var newcat = new Category(json_obj[i]["pk"],category.CatName,category.Color);
+                var newcat = new global_module.Category(json_obj[i]["pk"],category.CatName,category.Color);
                 catslist.push(newcat);
 
                 var newopt = $('<option/>');
@@ -50,31 +61,31 @@ function loadcats() {
     xhttp.send();
 }
 
-function Category(id,name,color) {
-    //category object
-    this.catid = id;
-    this.catname = name;
-    this.catcolor = color;
-}
-
-
-class Task {
-    constructor() {
-        //todo: assign default values in task
-    }
-
-    assignProperties(id,name, descriptions,start,due,category,status,progress) {
-        this.id = id;
-        this.TaskName = name;
-        this.Description = descriptions;
-        this.StartDate = start;
-        this.DueDate = due;
-        this.Categories = category;
-        this.Status = status;
-        this.Progress =progress;
-    }
-
-}
+//function Category(id,name,color) {
+//    //category object
+//    this.catid = id;
+//    this.catname = name;
+//    this.catcolor = color;
+//}
+//
+//
+//class Task {
+//    constructor() {
+//        //todo: assign default values in task
+//    }
+//
+//    assignProperties(id,name, descriptions,start,due,category,status,progress) {
+//        this.id = id;
+//        this.TaskName = name;
+//        this.Description = descriptions;
+//        this.StartDate = start;
+//        this.DueDate = due;
+//        this.Categories = category;
+//        this.Status = status;
+//        this.Progress =progress;
+//    }
+//
+//}
 
 function showtaskentry() { //open the add task section
     $("#addtask").show(); //show div
@@ -128,7 +139,7 @@ function constructTable(list, selector) {
 		row.append($('<td/>').html(db_id));
 
 
-        var task = new Task(); //Create task object for compatibility with previous code (filling in edit task, etc)
+        var task = new global_module.Task(); //Create task object for compatibility with previous code (filling in edit task, etc)
         task.id = db_id;
 
 		
@@ -148,8 +159,10 @@ function constructTable(list, selector) {
 		
 		//add on click event
 // 		row.click(edittaskopen(list[i]["pk"]))
-		row.attr('onClick', 'edittaskopen('+ String(db_id)+')');
-		// Adding each row to the table 
+//		row.attr('onClick', 'edittaskopen('+ String(db_id)+')');
+//		row.attr('id', 'row'+ String(db_id))
+		row.click({tasknum: db_id}, edittaskopen)
+		// Adding each row to the table
 		$(selector).append(row); 
         tasks.push(task);
 	} 
@@ -216,7 +229,7 @@ function constructTable(list, selector) {
 //
 //}
 
-function edittaskopen(idarg) {//open add/edit task div and fill in the attributes of the task being edited
+function edittaskopen(event) {//open add/edit task div and fill in the attributes of the task being edited
 
     $("#addtask").show(); //show the div
     $("#add").hide(); //ensure add task button is hidden
@@ -225,7 +238,7 @@ function edittaskopen(idarg) {//open add/edit task div and fill in the attribute
     //find index in tasks list that corresponds to the ID of the current task
     var index = 0;
     for(var i = 0; i<tasks.length;i++) {
-        if (tasks[i].id==idarg.toString()) {
+        if (tasks[i].id==event.data.tasknum.toString()) {
             index = i;
         }
     }
