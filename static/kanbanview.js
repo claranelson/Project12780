@@ -1,9 +1,20 @@
-
+import * as global_module from './global.js';
 
 $(document).ready(function(){
     //these functions make the jQuery UI elements active, making the proper things sortable and datepicker
     $("#startdate").datepicker({dateFormat: "yy-mm-dd"});
     $("#duedate").datepicker({dateFormat: "yy-mm-dd"});
+
+    //define button click methods
+    $("#showtasks").click(showtaskentry);
+    $("#filter_button").click(filter);
+    $("#reset_button").click(reset_filter);
+    $("#cancel_addedit").click(canceladdtask);
+    $("#add").click(global_module.addTask);
+    $("#edit").click(global_module.editTask);
+
+    loader()
+
     $( ".sortable" ).sortable({
       connectWith: ".connectedSortable",
         receive: taskmoved
@@ -11,34 +22,38 @@ $(document).ready(function(){
       })
   });
 
+function reset_filter() {
+    //todo: fill in with old reset function (I think I overwrote it)
+}
+
 function loader() {
     //load the categories and the tasks as a callback function
-    loadcats(function() {loadtasks()});
+    loadcats(function() {global_module.loadtasks('kanbanview.html')});
 }
-
-function Task(id,name, des,start,due,cat,stat,prog)
-{ //task object
-    this.id = id;
-    this.TaskName = name;
-    this.Description = des;
-    this.StartDate = start;
-    this.DueDate = due;
-    this.Categories = cat;
-    this.Status = stat;
-    this.Progress = prog;
-}
-
-function Category(id,name,color) {
-    //category object
-    this.catid = id;
-    this.catname = name;
-    this.catcolor = color;
-}
+//
+//function Task(id,name, des,start,due,cat,stat,prog)
+//{ //task object
+//    this.id = id;
+//    this.TaskName = name;
+//    this.Description = des;
+//    this.StartDate = start;
+//    this.DueDate = due;
+//    this.Categories = cat;
+//    this.Status = stat;
+//    this.Progress = prog;
+//}
+//
+//function Category(id,name,color) {
+//    //category object
+//    this.catid = id;
+//    this.catname = name;
+//    this.catcolor = color;
+//}
 
 function loadcats(callback) { //pass loadtasks as the callback argument function
     //create categories
     var xhttp = new XMLHttpRequest();
-        catslist = []; //global variable declaration
+        window.catslist = []; //global variable declaration
         // tasks = []; //global variable declaration
         xhttp.onreadystatechange = function()
         {
@@ -60,7 +75,7 @@ function loadcats(callback) { //pass loadtasks as the callback argument function
 
                 for (var i = 0; i < json_obj.length;i++) {
                     var category = json_obj[i]["fields"];
-                    var newcat = new Category(json_obj[i]["pk"],category.CatName,category.Color);
+                    var newcat = new global_module.Category(json_obj[i]["pk"],category.CatName,category.Color);
                     catslist.push(newcat);
 
                     var newopt = $('<option/>');
@@ -99,35 +114,33 @@ function loadcats(callback) { //pass loadtasks as the callback argument function
 
 }
 
-function loadtasks() {
-    //many parts of this code were modelled after the drawings example used in close
-    $("#addtask").hide();
-    var xhttp = new XMLHttpRequest();
-    window.tasks = []; //global variable declaration
-    xhttp.onreadystatechange = function() {
-        if(xhttp.readyState == 4 && xhttp.status == 200)
-        {   //parse string to get tasks
-            var JSONstring = xhttp.responseText;
-            var json_obj = JSON.parse(JSONstring);
-            createcards(json_obj);
-            // console.log(window.tasks);
-
-
-        }
-
-    };
-
-    xhttp.open("GET", "/loadTasks/",true);
-    xhttp.send();
-}
+//function loadtasks() {
+//    //many parts of this code were modelled after the drawings example used in close
+//    $("#addtask").hide();
+//    var xhttp = new XMLHttpRequest();
+//    window.tasks = []; //global variable declaration
+//    xhttp.onreadystatechange = function() {
+//        if(xhttp.readyState == 4 && xhttp.status == 200)
+//        {   //parse string to get tasks
+//            var JSONstring = xhttp.responseText;
+//            var json_obj = JSON.parse(JSONstring);
+//            createcards(json_obj);
+//            // console.log(window.tasks);
+//
+//
+//        }
+//
+//    };
+//
+//    xhttp.open("GET", "/loadTasks/",true);
+//    xhttp.send();
+//}
 
 function createcards(list) {
-    
 
     for (var i = 0; i < list.length; i++) {
-        task = createCard(list[i]);
+        const task = createCard(list[i]);
         window.tasks.push(task);
-
 
     }
 
@@ -137,17 +150,17 @@ function createCard(list_task) {
 
     //column and field are used more or less interchangeably here as it is modified from the listview
 
-    var task = new Task();
+    var task = new global_module.Task();
 
     var card = $('<li/>');
 
     var card_info = $('<ul/>');
 
-    card_fields = ["TaskName", "Categories","DueDate", "Status", "Description","StartDate","Progress"];
-    show_field = ["TaskName", "Categories","DueDate"]
-    card_labels = ["Name", "Category", "Due Date"];
+    const card_fields = ["TaskName", "Categories","DueDate", "Status", "Description","StartDate","Progress"];
+    const show_field = ["TaskName", "Categories","DueDate"]
+    const card_labels = ["Name", "Category", "Due Date"];
 
-    fields = list_task["fields"];
+    const fields = list_task["fields"];
 
     //add ID separately
     var db_id = list_task["pk"];
@@ -168,7 +181,7 @@ function createCard(list_task) {
         if (val == null) val = "N/A";
 
         if (colname != "Status") {
-            field_li = $('<li/>');
+            const field_li = $('<li/>');
             field_li.html(card_labels[colIndex]+ ": " + String(val));
             card_info.append(field_li);
             if (show_field.indexOf(colname) < 0) {// check if colname in show_field list
@@ -208,7 +221,8 @@ function createCard(list_task) {
     card.css("background-color",category_color);
     card_info.addClass("card_info");
     card.append(card_info);
-    card.attr("ondblclick", "edittaskopen(" + String(db_id)+ ")");
+//    card.attr("ondblclick", "edittaskopen(" + String(db_id)+ ")");
+    card.dblclick({tasknum: db_id}, global_module.edittaskopen)
 
     if (task.Status == "Not started") {
         var tagname = "#Not_Startedul";
@@ -232,12 +246,11 @@ function filter() {
     var cat = $("#catfilt").val();
     var xhttp = new XMLHttpRequest();
 
-
     //starting here, we're doing a similar thing to loadtasks, but it's just easier to repeat the function than do it more smoothly
     //in a final version, these would be streamlined so this part was just one function
     //given all the times this function was changed, it probably would have saved time over all to create a separate function used in both loadtasks and filter
     //please see the loadtasks function for comments and explanations
-    tasks = [];
+    window.tasks = [];
     xhttp.onreadystatechange = function() {
         if(xhttp.readyState == 4 && xhttp.status == 200) {
             //need to clear the kanban board
@@ -264,34 +277,32 @@ function filter() {
     }
     xhttp.send();
 }
-
-function edittaskopen(idarg) {
-    //open the edit task menu and fill all the input boxes with the correct values for the task
-    $("#addtask").show(); //open the menu
-    $("#add").hide(); //hide the add task button
-    $("#edit").show();
-    var index = 0;
-    //find the index of the task in the tasks global variable that was created when tasks were loaded
-    for(var i = 0; i<window.tasks.length;i++) {
-        if (window.tasks[i].id==idarg.toString()) {
-            index = i;
-        }
-    }
-    console.log(window.tasks);
-    console.log(currenttask);
-    //grab the task object from the list using that index
-    var currenttask = window.tasks[index];
-
-    //fill the input boxes with the task attributes
-    $("#taskdesc").val(currenttask.Description);
-    $("#taskname").val(currenttask.TaskName);
-    $("#duedate").val(currenttask.DueDate);
-    $("#startdate").val(currenttask.StartDate);
-    $("#cats").val(currenttask.Categories);
-    $("#prog").val(currenttask.Progress);
-    $("#stat").val(currenttask.Status);
-    $("#taskid").val(currenttask.id);
-}
+//
+//function edittaskopen(idarg) {
+//    //open the edit task menu and fill all the input boxes with the correct values for the task
+//    $("#addtask").show(); //open the menu
+//    $("#add").hide(); //hide the add task button
+//    $("#edit").show();
+//    var index = 0;
+//    //find the index of the task in the tasks global variable that was created when tasks were loaded
+//    for(var i = 0; i<window.tasks.length;i++) {
+//        if (window.tasks[i].id==idarg.toString()) {
+//            index = i;
+//        }
+//    }
+//    //grab the task object from the list using that index
+//    var currenttask = window.tasks[index];
+//
+//    //fill the input boxes with the task attributes
+//    $("#taskdesc").val(currenttask.Description);
+//    $("#taskname").val(currenttask.TaskName);
+//    $("#duedate").val(currenttask.DueDate);
+//    $("#startdate").val(currenttask.StartDate);
+//    $("#cats").val(currenttask.Categories);
+//    $("#prog").val(currenttask.Progress);
+//    $("#stat").val(currenttask.Status);
+//    $("#taskid").val(currenttask.id);
+//}
 
 function taskmoved(event,ui) {
     //change the status of the task when it's moved
@@ -316,54 +327,54 @@ function taskmoved(event,ui) {
     xhttp2.open("GET", "/editTaskstatus?ID="+String(taskid)+"&Status="+ newstatus, true);
     xhttp2.send();
 }
-
-function addTask() {
-
-    var xhttp2 = new XMLHttpRequest();
-
-    //grab values in input boes
-    var descr = $("#taskdesc").val();
-    var name = $("#taskname").val();
-    var due = $("#duedate").val();
-    var start = $("#startdate").val();
-    var cat = $("#cats").val();
-    var prog = $("#prog").val();
-    var stat = $("#stat").val();
-
-    xhttp2.onreadystatechange = function() {
-        if(xhttp2.readyState == 4 && xhttp2.status == 200)
-        {
-            //need to clear the kanban board
-            $("#In_Progressul").html("");
-            $("#Not_Startedul").html("");
-            $("#Completeul").html("");
-
-            //clear input boxes
-            $("#taskdesc").val("");
-            $("#taskname").val("");
-            $("#duedate").val("");
-            $("#startdate").val("");
-            $("#cats").val("");
-            $("#prog").val("");
-            $("#stat").val("");
-            $("#taskid").val("");
-
-            //now load
-            loadtasks();
-
-        }};
-    //send http with task attributes
-    // xhttp2.open("GET", "/addTask?", true);
-    // var csrftoken = getCookie('csrftoken'); 
-    xhttp2.open("POST", "/addTask/");
-    xhttp2.send("TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat)
-
-
-    // xhttp2.send();
-
-    $("#addtask").hide();
-
-    }
+//
+//function addTask() {
+//
+//    var xhttp2 = new XMLHttpRequest();
+//
+//    //grab values in input boes
+//    var descr = $("#taskdesc").val();
+//    var name = $("#taskname").val();
+//    var due = $("#duedate").val();
+//    var start = $("#startdate").val();
+//    var cat = $("#cats").val();
+//    var prog = $("#prog").val();
+//    var stat = $("#stat").val();
+//
+//    xhttp2.onreadystatechange = function() {
+//        if(xhttp2.readyState == 4 && xhttp2.status == 200)
+//        {
+//            //need to clear the kanban board
+//            $("#In_Progressul").html("");
+//            $("#Not_Startedul").html("");
+//            $("#Completeul").html("");
+//
+//            //clear input boxes
+//            $("#taskdesc").val("");
+//            $("#taskname").val("");
+//            $("#duedate").val("");
+//            $("#startdate").val("");
+//            $("#cats").val("");
+//            $("#prog").val("");
+//            $("#stat").val("");
+//            $("#taskid").val("");
+//
+//            //now load
+//            loadtasks();
+//
+//        }};
+//    //send http with task attributes
+//    // xhttp2.open("GET", "/addTask?", true);
+//    // var csrftoken = getCookie('csrftoken');
+//    xhttp2.open("POST", "/addTask/");
+//    xhttp2.send("TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat)
+//
+//
+//    // xhttp2.send();
+//
+//    $("#addtask").hide();
+//
+//    }
 
 // from Django docs to get csrf token using jQuery
 function getCookie(name) {
@@ -382,47 +393,47 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
-function editTask() {
-
-    var xhttp2 = new XMLHttpRequest();
-
-    //grab the input boxes' values
-    var id = $("#taskid").val();
-    var descr = $("#taskdesc").val();
-    var name = $("#taskname").val();
-    var due = $("#duedate").val();
-    var start = $("#startdate").val();
-    var cat = $("#cats").val();
-    var prog = $("#prog").val();
-    var stat = $("#stat").val();
-
-    xhttp2.onreadystatechange = function() {
-        if(xhttp2.readyState == 4 && xhttp2.status == 200)
-        {    //need to clear the kanban board
-            $("#In_Progressul").html("");
-            $("#Not_Startedul").html("");
-            $("#Completeul").html("");
-
-            //clear the values in the input boxes
-            $("#taskdesc").val("");
-            $("#taskname").val("");
-            $("#duedate").val("");
-            $("#startdate").val("");
-            $("#cats").val("");
-            $("#prog").val("");
-            $("#stat").val("");
-            $("#taskid").val("");
-            loadtasks();
-
-        }};
-    //send http with the attributes
-    xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
-    xhttp2.send();
-    //hide the menu
-    $("#addtask").hide();
-
-    }
+//
+//function editTask() {
+//
+//    var xhttp2 = new XMLHttpRequest();
+//
+//    //grab the input boxes' values
+//    var id = $("#taskid").val();
+//    var descr = $("#taskdesc").val();
+//    var name = $("#taskname").val();
+//    var due = $("#duedate").val();
+//    var start = $("#startdate").val();
+//    var cat = $("#cats").val();
+//    var prog = $("#prog").val();
+//    var stat = $("#stat").val();
+//
+//    xhttp2.onreadystatechange = function() {
+//        if(xhttp2.readyState == 4 && xhttp2.status == 200)
+//        {    //need to clear the kanban board
+//            $("#In_Progressul").html("");
+//            $("#Not_Startedul").html("");
+//            $("#Completeul").html("");
+//
+//            //clear the values in the input boxes
+//            $("#taskdesc").val("");
+//            $("#taskname").val("");
+//            $("#duedate").val("");
+//            $("#startdate").val("");
+//            $("#cats").val("");
+//            $("#prog").val("");
+//            $("#stat").val("");
+//            $("#taskid").val("");
+//            loadtasks();
+//
+//        }};
+//    //send http with the attributes
+//    xhttp2.open("GET", "/editTask?ID="+id+"&TaskName="+name+"&Description="+descr+"&DueDate="+due+"&StartDate="+start+"&Categories="+cat+"&Progress="+prog+"&Status="+ stat, true);
+//    xhttp2.send();
+//    //hide the menu
+//    $("#addtask").hide();
+//
+//    }
 
 function canceladdtask() {
     //cancel the add task menu
@@ -446,9 +457,11 @@ function showtaskentry() {
 
 }
 
-function reset() { //reset the contents of the Kanban board
-    $("#In_Progressul").html("");
-    $("#Not_Startedul").html("");
-    $("#Completeul").html("");
-    loadtasks()
-}
+//function reset() { //reset the contents of the Kanban board
+//    $("#In_Progressul").html("");
+//    $("#Not_Startedul").html("");
+//    $("#Completeul").html("");
+//    loadtasks()
+//}
+
+export {createcards};

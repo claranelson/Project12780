@@ -1,6 +1,5 @@
-//import {reset_tasks, loadtasks, pullTaskInputs, mapIdToProperty, clearInputs, addTask, editTask, emptytasks} from './global.js';
 import * as global_module from './global.js';
-//import {Task} from './global.js';
+
 
 $(document).ready(function(){
     //make the appropriate input boxes into jQuery UI datepickers
@@ -161,7 +160,7 @@ function constructTable(list, selector) {
 // 		row.click(edittaskopen(list[i]["pk"]))
 //		row.attr('onClick', 'edittaskopen('+ String(db_id)+')');
 //		row.attr('id', 'row'+ String(db_id))
-		row.click({tasknum: db_id}, edittaskopen)
+		row.click({tasknum: db_id}, global_module.edittaskopen)
 		// Adding each row to the table
 		$(selector).append(row); 
         tasks.push(task);
@@ -228,34 +227,34 @@ function constructTable(list, selector) {
 //    clearInputs(inputIdList)
 //
 //}
-
-function edittaskopen(event) {//open add/edit task div and fill in the attributes of the task being edited
-
-    $("#addtask").show(); //show the div
-    $("#add").hide(); //ensure add task button is hidden
-    $("#edit").show(); //ensure edit task button is showing
-
-    //find index in tasks list that corresponds to the ID of the current task
-    var index = 0;
-    for(var i = 0; i<tasks.length;i++) {
-        if (tasks[i].id==event.data.tasknum.toString()) {
-            index = i;
-        }
-    }
-
-    var currenttask = tasks[index]; //get the objects of the task that was clicked on
-    console.log(currenttask);
-
-    //fill the values of the input and select boxes
-    $("#taskdesc").val(currenttask.Description);
-    $("#taskname").val(currenttask.TaskName);
-    $("#duedate").val(currenttask.DueDate);
-    $("#startdate").val(currenttask.StartDate);
-    $("#cats").val(currenttask.Categories);
-    $("#prog").val(currenttask.Progress);
-    $("#stat").val(currenttask.Status);
-    $("#taskid").val(currenttask.id);
-}
+//
+//function edittaskopen(event) {//open add/edit task div and fill in the attributes of the task being edited
+//
+//    $("#addtask").show(); //show the div
+//    $("#add").hide(); //ensure add task button is hidden
+//    $("#edit").show(); //ensure edit task button is showing
+//
+//    //find index in tasks list that corresponds to the ID of the current task
+//    var index = 0;
+//    for(var i = 0; i<tasks.length;i++) {
+//        if (tasks[i].id==event.data.tasknum.toString()) {
+//            index = i;
+//        }
+//    }
+//
+//    var currenttask = tasks[index]; //get the objects of the task that was clicked on
+//    console.log(currenttask);
+//
+//    //fill the values of the input and select boxes
+//    $("#taskdesc").val(currenttask.Description);
+//    $("#taskname").val(currenttask.TaskName);
+//    $("#duedate").val(currenttask.DueDate);
+//    $("#startdate").val(currenttask.StartDate);
+//    $("#cats").val(currenttask.Categories);
+//    $("#prog").val(currenttask.Progress);
+//    $("#stat").val(currenttask.Status);
+//    $("#taskid").val(currenttask.id);
+//}
 
 function filter() {
     var name = $("#namefilter").val();

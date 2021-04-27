@@ -1,4 +1,5 @@
-import {constructTable} from './listview.js'
+import {constructTable} from './listview.js';
+import {createcards} from './kanbanview.js';
 
 export function reset_tasks() {
     const source_page = location.pathname.split('/').pop();
@@ -13,6 +14,34 @@ export function Category(id,name,color) {
     this.catid = id;
     this.catname = name;
     this.catcolor = color;
+}
+
+export function edittaskopen(event) {//open add/edit task div and fill in the attributes of the task being edited
+
+    $("#addtask").show(); //show the div
+    $("#add").hide(); //ensure add task button is hidden
+    $("#edit").show(); //ensure edit task button is showing
+
+    //find index in tasks list that corresponds to the ID of the current task
+    var index = 0;
+    for(var i = 0; i<tasks.length;i++) {
+        if (tasks[i].id==event.data.tasknum.toString()) {
+            index = i;
+        }
+    }
+
+    var currenttask = tasks[index]; //get the objects of the task that was clicked on
+    console.log(currenttask);
+
+    //fill the values of the input and select boxes
+    $("#taskdesc").val(currenttask.Description);
+    $("#taskname").val(currenttask.TaskName);
+    $("#duedate").val(currenttask.DueDate);
+    $("#startdate").val(currenttask.StartDate);
+    $("#cats").val(currenttask.Categories);
+    $("#prog").val(currenttask.Progress);
+    $("#stat").val(currenttask.Status);
+    $("#taskid").val(currenttask.id);
 }
 
 
@@ -69,6 +98,8 @@ export function pullTaskInputs(inputList) {
         const propertyValue = $(input).val();
         const propertyName = mapIdToProperty(input);
         newTask[propertyName] = propertyValue;
+        console.log(propertyValue);
+        console.log(newTask);
     })
 
     return newTask
@@ -131,6 +162,7 @@ export function editTask() {
     //grab values in the input boxes
     const editedTask = pullTaskInputs(inputIdList);
     const task_string = JSON.stringify(editedTask);
+    console.log(task_string);
 
     xhttp2.onreadystatechange = function() {
         if(xhttp2.readyState == 4 && xhttp2.status == 200) {

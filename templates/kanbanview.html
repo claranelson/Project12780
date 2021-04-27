@@ -12,15 +12,16 @@
   src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
   integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
   crossorigin="anonymous"></script>
-    <script src="/static/kanbanview.js"></script>
+    <script type="module" src="/static/global.js"></script>
+    <script type="module" src="/static/kanbanview.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/kanbanview.css">
     <link rel="stylesheet" type="text/css" href="/static/universal.css">
 </head>
-<body onload = loader()>
+<body>
 
     <div class = "tabs">
         <button class = "menu"><a href="http://127.0.0.1:8000/listview">List View</a></button>
-        <button class = "menu" onclick="showtaskentry()">Add Task</button>
+        <button class = "menu" id="showtasks">Add Task</button>
         <button class = "menu last"><a href="http://127.0.0.1:8000/categorymaker">Add Category</a></button>
     </div>
 
@@ -38,8 +39,8 @@
         <option value = "In Progress">In Progress</option><option value = "Complete">Complete</option></select>
         <label class = "filt">Current?</label><select class = "filt" id = "currentfilt" style="width:100px"><option value = None>None</option><option value = "Yes">Yes</option></select>
         <label class = "filt">Category: </label><select class = "filt" id = "catfilt" style="width:100px"></select>
-        <button class = "filt" onclick = "filter()">Filter</button>
-        <button class = "filt last" onclick = "reset()">Reset Filter</button>
+        <button class = "filt" id = "filter_button">Filter</button>
+        <button class = "filt last" id="reset_button">Reset Filter</button>
     </div>
 
 <p> </p> {# This solves a big formatting problem by creating a space between the filter and the first column #}
@@ -56,9 +57,9 @@
             <tr><td>Status:</td><td><select id = "stat" style="width:150px"><option value = "Not started">Not Started</option>
             <option value = "In Progress">In Progress</option><option value = "Complete">Complete</option></select></td></tr>
         </table>
-        <button id = "add" onclick = "addTask()">Add Task</button>
-        <button id = "edit" onclick = "editTask()">Edit Task</button>
-        <button onclick = "canceladdtask()">Cancel Add/Edit Task</button>
+        <button id = "add">Add Task</button>
+        <button id = "edit">Edit Task</button>
+        <button id = "cancel_addedit">Cancel Add/Edit Task</button>
     </div>
     {#http://orangeloops.com/2016/07/how-to-create-a-kanban-board-with-jquery/#}
 
